@@ -8,19 +8,19 @@
     {
       "type": "tiled-dash",
       "res_url": [
-        "http://localhost:80/~ayamir/1-1/base_dash.mpd",
-        "http://localhost:80/~ayamir/1-1/tile_0_0/L1_dash.mpd",
-        "http://localhost:80/~ayamir/1-1/tile_1_0/L1_dash.mpd",
-        "http://localhost:80/~ayamir/1-1/tile_2_0/L1_dash.mpd",
-        "http://localhost:80/~ayamir/1-1/tile_3_0/L1_dash.mpd",
-        "http://localhost:80/~ayamir/1-1/tile_0_1/L1_dash.mpd",
-        "http://localhost:80/~ayamir/1-1/tile_1_1/L1_dash.mpd",
-        "http://localhost:80/~ayamir/1-1/tile_2_1/L1_dash.mpd",
-        "http://localhost:80/~ayamir/1-1/tile_3_1/L1_dash.mpd",
-        "http://localhost:80/~ayamir/1-1/tile_0_2/L1_dash.mpd",
-        "http://localhost:80/~ayamir/1-1/tile_1_2/L1_dash.mpd",
-        "http://localhost:80/~ayamir/1-1/tile_2_2/L1_dash.mpd",
-        "http://localhost:80/~ayamir/1-1/tile_3_2/L1_dash.mpd"
+        "http://10.112.74.193:80/~ayamir/070/output/stream.mpd",
+        "http://10.112.74.193:80/~ayamir/070/tile_0_0/output/stream.mpd",
+        "http://10.112.74.193:80/~ayamir/070/tile_1_0/output/stream.mpd",
+        "http://10.112.74.193:80/~ayamir/070/tile_2_0/output/stream.mpd",
+        "http://10.112.74.193:80/~ayamir/070/tile_3_0/output/stream.mpd",
+        "http://10.112.74.193:80/~ayamir/070/tile_0_1/output/stream.mpd",
+        "http://10.112.74.193:80/~ayamir/070/tile_1_1/output/stream.mpd",
+        "http://10.112.74.193:80/~ayamir/070/tile_2_1/output/stream.mpd",
+        "http://10.112.74.193:80/~ayamir/070/tile_3_1/output/stream.mpd",
+        "http://10.112.74.193:80/~ayamir/070/tile_0_2/output/stream.mpd",
+        "http://10.112.74.193:80/~ayamir/070/tile_1_2/output/stream.mpd",
+        "http://10.112.74.193:80/~ayamir/070/tile_2_2/output/stream.mpd",
+        "http://10.112.74.193:80/~ayamir/070/tile_3_2/output/stream.mpd"
       ],
       "panoramic_type": "360",
       "radius": 500
