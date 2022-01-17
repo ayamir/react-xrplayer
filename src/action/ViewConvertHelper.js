@@ -18,7 +18,7 @@ class ViewConvertHelper {
     toNormalView = (durtime = 8000, delay = 0) => {
         if (this.state && this.state === 'normal') return;
         this.cameraMoveAction = new CameraMoveAction(this.camera,
-            { x: 0, y: 0, z: 100, fov: 80 }, durtime, delay);
+            {x: 0, y: 0, z: 100, fov: 80}, durtime, delay);
         this.cameraMoveAction.onStartHandler = () => {
             this.controls && this.controls.disConnect();
         }
@@ -32,7 +32,7 @@ class ViewConvertHelper {
     toPlanetView = (durtime = 8000, delay = 0) => {
         if (this.state && this.state === 'planet') return;
         this.cameraMoveAction = new CameraMoveAction(this.camera,
-            { x: 0, y: 450, z: 0, fov: 150 }, durtime, delay);
+            {x: 0, y: 450, z: 0, fov: 150}, durtime, delay);
         this.cameraMoveAction.onStartHandler = () => {
             this.controls && this.controls.disConnect();
         }

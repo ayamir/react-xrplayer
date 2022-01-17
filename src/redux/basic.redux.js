@@ -12,8 +12,9 @@ const initialState = {
 export function basic(state = initialState, action) {
     switch (action.type) {
         case GET_LIVE_CONFIGURE:
-            return { ...state, live_configure: action.payload };
-        default: return state;
+            return {...state, live_configure: action.payload};
+        default:
+            return state;
     }
 }
 

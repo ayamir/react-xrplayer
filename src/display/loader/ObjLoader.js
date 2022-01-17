@@ -22,8 +22,12 @@ class ObjLoader {
                 obj.scale.set(data.scale, data.scale, data.scale);//网格模型缩放
                 obj.geometry.center();//几何体居中
             },
-            (data) => { console.log('loading json obj', data.loaded); },
-            (e) => { console.log('err', e); }
+            (data) => {
+                console.log('loading json obj', data.loaded);
+            },
+            (e) => {
+                console.log('err', e);
+            }
         )
     }
 

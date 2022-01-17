@@ -63,8 +63,7 @@ class ResourceBoxHelper {
         if (params.hasOwnProperty("draggable")) {
             if (draggable === false && params.draggable === true) {
                 this.dragBoxes.add(textBox.planeMesh);
-            }
-            else if (draggable === true && params.draggable === false) {
+            } else if (draggable === true && params.draggable === false) {
                 this.dragBoxes.delete(textBox.planeMesh);
             }
         }
@@ -119,9 +118,9 @@ class ResourceBoxHelper {
     getIntersects = (clientX, clientY, array) => {
         let raycaster = new THREE.Raycaster();
         let mouse = new THREE.Vector2();
-        const { x: domX, y: domY } = this.renderer.domElement.getBoundingClientRect();
+        const {x: domX, y: domY} = this.renderer.domElement.getBoundingClientRect();
         mouse.x = ((clientX - domX) / this.renderer.domElement.clientWidth) * 2 - 1;
-        mouse.y = - ((clientY - domY) / this.renderer.domElement.clientHeight) * 2 + 1;
+        mouse.y = -((clientY - domY) / this.renderer.domElement.clientHeight) * 2 + 1;
         raycaster.setFromCamera(mouse, this.camera);
         return raycaster.intersectObjects(array);
     }
@@ -193,10 +192,9 @@ class ResourceBoxHelper {
         if (type === "2d") {
             this.showType = type;
             this.embeddedTextBoxes.forEach(textBox => {
-               textBox.setType(type);
+                textBox.setType(type);
             });
-        }
-        else if (type === "embedded") {
+        } else if (type === "embedded") {
             this.showType = type;
             this.embeddedTextBoxes.forEach(textBox => {
                 textBox.setType(type);

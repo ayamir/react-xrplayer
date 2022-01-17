@@ -43,17 +43,17 @@ class CameraTween {
             this.started = true;
             this.startTime = new Date().getTime();
             this.onCameraAnimationStart &&
-                this.onCameraAnimationStart(this.key);
+            this.onCameraAnimationStart(this.key);
         });
         this.tween.onComplete(() => {
             this.onCameraAnimationEnded &&
-                this.onCameraAnimationEnded(this.key);
+            this.onCameraAnimationEnded(this.key);
             this.reset();
             this.started = false;
         });
         this.tween.onStop(() => {
             this.onCameraAnimationStop &&
-                this.onCameraAnimationStop(this.key);
+            this.onCameraAnimationStop(this.key);
             this.reset();
             this.started = false;
         });
@@ -82,8 +82,7 @@ class CameraTween {
                 cameraTween.camera.position.x = newPos.x;
                 cameraTween.camera.position.y = newPos.y;
                 cameraTween.camera.position.z = newPos.z;
-            }
-            else {
+            } else {
                 cameraTween.camera.position.x = pos.x;
                 cameraTween.camera.position.y = pos.y;
                 cameraTween.camera.position.z = pos.z;
@@ -104,13 +103,14 @@ class CameraTween {
                 return TWEEN.Easing.Sinusoidal.In;
             case 'Out':
                 return TWEEN.Easing.Sinusoidal.Out;
-            default: return TWEEN.Easing.Sinusoidal.InOut;
+            default:
+                return TWEEN.Easing.Sinusoidal.InOut;
         }
     }
 
     //经纬度到xyz的转换
     spherical2Cartesian = (lat, lon, distance) => {
-        const pos = { x: 0, y: 0, z: 0 };
+        const pos = {x: 0, y: 0, z: 0};
         lat = Math.max(this.fovDownEdge, Math.min(this.fovTopEdge, lat));
         const phi = THREE.Math.degToRad(lat);
         const theta = THREE.Math.degToRad(lon);
@@ -184,13 +184,13 @@ class CameraTweenGroup {
             item.onCameraAnimationEnded = (key) => {
                 this.state = 'ready';
                 this.onCameraAnimationEnded &&
-                    this.onCameraAnimationEnded(key);
+                this.onCameraAnimationEnded(key);
             }
             item.onCameraAnimationStart = (key) => {
                 this.currentIndex = itemIndex;
                 this.state = 'running';
                 this.onCameraAnimationStart &&
-                    this.onCameraAnimationStart(key);
+                this.onCameraAnimationStart(key);
             }
             item.onCameraAnimationStop = (key) => {
                 if (this.state === 'stoped') {
@@ -199,7 +199,7 @@ class CameraTweenGroup {
                     this.state = 'paused';
                 }
                 this.onCameraAnimationStop &&
-                    this.onCameraAnimationStop(key);
+                this.onCameraAnimationStop(key);
             }
         })
     }
@@ -303,8 +303,7 @@ class CameraTweenGroup {
             if (nowTween.disChange) {
                 pos0.distance = this.cameraControl.distance;
             }
-        }
-        else {                                          //xyz
+        } else {                                          //xyz
             pos0 = {
                 x: this.cameraControl.camera.position.x, y: this.cameraControl.camera.position.y,
                 z: this.cameraControl.camera.position.z
@@ -319,10 +318,10 @@ class CameraTweenGroup {
 
         //创建新tween
         this.playTween = new CameraTween({
-            pos0: pos0, pos1: nowTween.pos1,
-            duration: duration,
-            easing: nowTween.easing
-        },
+                pos0: pos0, pos1: nowTween.pos1,
+                duration: duration,
+                easing: nowTween.easing
+            },
             this.cameraControl.camera,
             100,
             this.cameraControl
@@ -362,4 +361,4 @@ class CameraTweenGroup {
 
 }
 
-export { CameraTween, CameraTweenGroup };
+export {CameraTween, CameraTweenGroup};

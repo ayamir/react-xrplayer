@@ -10,7 +10,7 @@ import VRHelper from "./VRHelper";
 import CameraMoveAction from "../action/CameraMoveAction";
 
 import HotSpotHelper from '../display/HotSpotHelper';
-import { CameraTween, CameraTweenGroup } from "../controls/CameraTween";
+import {CameraTween, CameraTweenGroup} from "../controls/CameraTween";
 import EmbeddedBoxManager from "../display/ResourceBox/EmbeddedResource/EmbeddedBoxManager";
 import EmbeddedTextBox from "../display/ResourceBox/EmbeddedResource/EmbeddedTextBox";
 import EmbeddedImageBox from "../display/ResourceBox/EmbeddedResource/EmbeddedImageBox";
@@ -97,7 +97,7 @@ class XRPlayerManager {
         const camera = new THREE.PerspectiveCamera(
             camera_fov, this.mount.clientWidth / this.mount.clientHeight,
             camera_near, camera_far);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const renderer = new THREE.WebGLRenderer({antialias: true});
         this.renderer = renderer;
         camera.position.set(position.x, position.y, position.z);
         camera.target = new THREE.Vector3(target.x, target.y, target.z);
@@ -111,7 +111,7 @@ class XRPlayerManager {
             axes_helper_display: isAxesHelperDisplay,
             camera_helper_display: isCameraHelperDisplay
         } = this.props;
-        const { panoramic_type = '360', radius = 500, height = 1000 } = textureResource;
+        const {panoramic_type = '360', radius = 500, height = 1000} = textureResource;
         this.sceneContainer = document.getElementById('video');
         let geometry;
         if (panoramic_type === '180') {
@@ -121,9 +121,9 @@ class XRPlayerManager {
         }
         geometry.scale(-1, 1, 1);
         this.sceneTextureHelper = new TextureHelper(this.sceneContainer);
-        this.sceneTextureHelper.onCanPlayHandler = (resUrl) => this.handler('sence_res_ready', { resUrl: resUrl });
+        this.sceneTextureHelper.onCanPlayHandler = (resUrl) => this.handler('sence_res_ready', {resUrl: resUrl});
         let texture = this.sceneTextureHelper.loadTexture(textureResource);
-        let material = new THREE.MeshBasicMaterial({ map: texture });
+        let material = new THREE.MeshBasicMaterial({map: texture});
         this.sceneMesh = new THREE.Mesh(geometry, material);
         this.scene = new THREE.Scene();
         this.scene.add(this.sceneMesh);
@@ -207,7 +207,7 @@ class XRPlayerManager {
      * @param {boolean} muted 是否静音
      */
     setGlobalMuted = (muted) => {
-        this.handler('global_muted', { muted: muted });
+        this.handler('global_muted', {muted: muted});
     }
     /**
      * @function
@@ -216,7 +216,7 @@ class XRPlayerManager {
      * @param {number} volume 音量大小
      */
     setGlobalVolume = (volume) => {
-        this.handler('global_volume', { volume: volume });
+        this.handler('global_volume', {volume: volume});
     }
 
     /****************************全景场景相关控制接口************************* */
@@ -235,7 +235,7 @@ class XRPlayerManager {
         this.sceneTextureHelper && this.sceneTextureHelper.unloadResource();
         this.sceneTextureHelper = new TextureHelper(this.sceneContainer);
         let texture = this.sceneTextureHelper.loadTexture(res);
-        let material = new THREE.MeshBasicMaterial({ map: texture });
+        let material = new THREE.MeshBasicMaterial({map: texture});
         this.sceneMesh.material = material;
     }
 
@@ -374,18 +374,18 @@ class XRPlayerManager {
     /**************************相机控制相关接口************************* */
     // 相机控制器开关
     /**
-    * @function
-    * @name XRPlayerManager#connectCameraControl
-    * @description 连接相机视角控制器，视角可以通过鼠标等方式调整
-    */
+     * @function
+     * @name XRPlayerManager#connectCameraControl
+     * @description 连接相机视角控制器，视角可以通过鼠标等方式调整
+     */
     connectCameraControl = () => {
         this.innerViewControls.connect();
     }
     /**
-    * @function
-    * @name XRPlayerManager#disConnectCameraControl
-    * @description 关闭连接器，无法通过鼠标方式调整视野
-    */
+     * @function
+     * @name XRPlayerManager#disConnectCameraControl
+     * @description 关闭连接器，无法通过鼠标方式调整视野
+     */
     disConnectCameraControl = () => {
         this.innerViewControls.disConnect();
     }
@@ -444,7 +444,7 @@ class XRPlayerManager {
      * @function
      * @name XRPlayerManager#setCameraFov
      * @description 设置相机当前的fov大小
-     * @param {number} fov 
+     * @param {number} fov
      */
     setCameraFov = (fov) => {
         this.innerViewControls.setCameraFov(fov);
@@ -462,7 +462,7 @@ class XRPlayerManager {
      * @function
      * @name XRPlayerManager#enableChangeFov
      * @description 控制是否允许用户通过鼠标滑轮调整FOV
-     * @param {boolean} enable 
+     * @param {boolean} enable
      */
     enableChangeFov = (enable) => {
         this.innerViewControls.enableChangeFov(enable);
@@ -508,8 +508,7 @@ class XRPlayerManager {
         if (this.vrHelper.vrStatus) {
             this.vrHelper.disable();
             this.renderer.setViewport(0, 0, this.mount.clientWidth, this.mount.clientHeight);
-        }
-        else {
+        } else {
             this.vrHelper.enable();
         }
     }
@@ -564,7 +563,7 @@ class XRPlayerManager {
         let textBox = this.getEmbeddedBoxManager().getEmbeddedBox(boxId);
         if (!!!textBox) return;
         textBox.onClick(() => {
-            this.handler(data.type, { data }, () => {
+            this.handler(data.type, {data}, () => {
                 this.closeEffectContainer();
             });
         });
@@ -622,7 +621,7 @@ class XRPlayerManager {
         if (!this.hotSpotHelper) {
             this.hotSpotHelper = new HotSpotHelper(this.scene, this.mount, this.camera);
         }
-        const { x, y, z } = position;
+        const {x, y, z} = position;
         this.hotSpotHelper.markIcon(img, new THREE.Vector3(x, y, z), name, title, width, height);
     }
 
@@ -736,16 +735,16 @@ class XRPlayerManager {
             100, this.innerViewControls);
         cameraTweenGroup.onCameraAnimationEnded = (key) => {
             this.onCameraAnimationEnded &&
-                this.onCameraAnimationEnded(key);
+            this.onCameraAnimationEnded(key);
 
         }
         cameraTweenGroup.onCameraAnimationStart = (key) => {
             this.onCameraAnimationStart &&
-                this.onCameraAnimationStart(key);
+            this.onCameraAnimationStart(key);
         }
         cameraTweenGroup.onCameraAnimationStop = (key) => {
             this.onCameraAnimationStop &&
-                this.onCameraAnimationStop(key);
+            this.onCameraAnimationStop(key);
         }
         this.cameraTweenGroup = cameraTweenGroup;
         return cameraTweenGroup;
@@ -772,8 +771,7 @@ class XRPlayerManager {
         }
         if (!!!time) {
             this.cameraTweenGroup.start();
-        }
-        else {
+        } else {
             this.cameraTweenGroup.start(time);
         }
     }
@@ -802,10 +800,11 @@ class XRPlayerManager {
         this.cameraTweenGroup.enableLoop(enable);
     }
 
-    emitEvent = (eventKey, callback = () => { }) => {
+    emitEvent = (eventKey, callback = () => {
+    }) => {
         if (this.spriteEventList && this.spriteEventList.has(eventKey)) {
             const data = this.spriteEventList.get(eventKey);
-            this.handler(data.type, { data }, () => {
+            this.handler(data.type, {data}, () => {
                 callback();
             })
         } else {
@@ -831,7 +830,7 @@ class XRPlayerManager {
     }
 
     spherical2Cartesian = (lat, lon, distance) => {
-        let pos = { x: 0, y: 0, z: 0 };
+        let pos = {x: 0, y: 0, z: 0};
         const phi = THREE.Math.degToRad(90 - lat);
         const theta = THREE.Math.degToRad(lon);
         pos.x = distance * Math.sin(phi) * Math.cos(theta);

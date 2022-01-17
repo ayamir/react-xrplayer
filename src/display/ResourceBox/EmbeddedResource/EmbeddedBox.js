@@ -41,8 +41,7 @@ class EmbeddedBox {
         if (this.manager !== null) {
             if (enable) {
                 this.manager.dragMeshes.add(this.planeMesh);
-            }
-            else {
+            } else {
                 this.manager.dragMeshes.delete(this.planeMesh);
             }
         }
@@ -58,12 +57,10 @@ class EmbeddedBox {
         if (visible) {
             if (this.showType === '2d') {
                 this.showTypeChangable && (this.canvas.style.display = 'block');
-            }
-            else if (this.meshReady && this.showType === 'embed') {
+            } else if (this.meshReady && this.showType === 'embed') {
                 this.planeMesh.visible = true;
             }
-        }
-        else {
+        } else {
             if (this.meshReady) this.planeMesh.visible = false;
             this.showTypeChangable && (this.canvas.style.display = 'none');
         }
@@ -82,8 +79,7 @@ class EmbeddedBox {
                 if (this.meshReady) this.planeMesh.material.opacity = 0;
                 this.canvas.style.display = 'block';
             }
-        }
-        else if (showType === 'embed') {
+        } else if (showType === 'embed') {
             this.showType = showType;
             if (this.visible) {
                 if (this.meshReady) this.planeMesh.material.opacity = 1;
@@ -99,7 +95,7 @@ class EmbeddedBox {
     setScale = (x, y) => {
         this.scale2DX = x;
         this.scale2DY = y;
-        this.canvas && (this.canvas.style.transform = "scale("+this.scale2DX+","+this.scale2DY+")");
+        this.canvas && (this.canvas.style.transform = "scale(" + this.scale2DX + "," + this.scale2DY + ")");
     }
 
     onClick = (callback) => {
@@ -113,7 +109,7 @@ class EmbeddedBox {
         this.canvas.style.position = 'absolute';
         this.canvas.style.left = "50px";
         this.canvas.style.top = "100px";
-        this.canvas.style.transform = "scale("+this.scale2DX+","+this.scale2DY+")";
+        this.canvas.style.transform = "scale(" + this.scale2DX + "," + this.scale2DY + ")";
         // document.body.appendChild(this.canvas)
     }
 
@@ -161,4 +157,5 @@ class EmbeddedBox {
 
     }
 }
+
 export default EmbeddedBox;

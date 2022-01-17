@@ -1,4 +1,4 @@
-import { MediaPlayer } from 'dashjs';
+import {MediaPlayer} from 'dashjs';
 import * as THREE from 'three';
 import TIMINGSRC from 'TIMINGSRC';
 import MCorp from 'MCorp';
@@ -162,8 +162,8 @@ class TiledStreaming {
     /**
      * @function
      * @name TiledStreaming#loadTile
-     * @param {number} id , tile分开的编号  
-     * @param {number} level, 加载分块的质量级别 
+     * @param {number} id , tile分开的编号
+     * @param {number} level, 加载分块的质量级别
      */
     loadTile = (id, level) => {
         // 动态创建视频
@@ -211,7 +211,7 @@ class TiledStreaming {
     /**
      * @function
      * @name TiledStreaming#unloadTile
-     * @param {number} id, 写在分块的编号 
+     * @param {number} id, 写在分块的编号
      */
     unloadTile = (id) => {
         let videoNode = this.enhanceVideos[id];
@@ -400,7 +400,8 @@ class TiledStreaming {
             this.detectCounter = 0;
             // 执行线性回归预测
             console.log('X的预测MAE=', this.errorX / this.errorCount);
-            console.log('Y的预测MAE=', this.errorY / this.errorCount);;
+            console.log('Y的预测MAE=', this.errorY / this.errorCount);
+            ;
             const regressionX = new SimpleLinearRegression(this.traceT, this.traceX);
             const regressionY = new SimpleLinearRegression(this.traceT, this.traceY);
             this.px = this.predictX[this.predictX.length - 1];

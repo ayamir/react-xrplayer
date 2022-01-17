@@ -48,7 +48,8 @@ class CenterModelHelper {
                 return new FBXLoader(this.scene);
             case 'obj':
                 return new ObjLoader(this.scene);
-            default: return null;
+            default:
+                return null;
         }
     }
 
