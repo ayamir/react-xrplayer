@@ -50,12 +50,12 @@ class DeviceOrientationControls {
 
         var zee = new THREE.Vector3(0, 0, 1);
         var q0 = new THREE.Quaternion(); // Quaternions are used in three.js to represent rotations.
-        var q1 = new THREE.Quaternion(- Math.sqrt(0.5), 0, 0, Math.sqrt(0.5)); // - PI/2 around the x-axis
+        var q1 = new THREE.Quaternion(-Math.sqrt(0.5), 0, 0, Math.sqrt(0.5)); // - PI/2 around the x-axis
         var euler = new THREE.Euler(); // 欧拉对象，描述xyz轴上的一个旋转序列
-        euler.set(beta, alpha, - gamma, 'YXZ'); // 'ZXY' for the device, but 'YXZ' for us
+        euler.set(beta, alpha, -gamma, 'YXZ'); // 'ZXY' for the device, but 'YXZ' for us
         this.camera.quaternion.setFromEuler(euler);    // 设置旋转角度
         this.camera.quaternion.multiply(q1); // 执行方位角的转换 
-        this.camera.quaternion.multiply(q0.setFromAxisAngle(zee, - orient));    // 横竖屏切换旋转
+        this.camera.quaternion.multiply(q0.setFromAxisAngle(zee, -orient));    // 横竖屏切换旋转
 
         // TODO distance同步视野大小,暂时先这么解决，澄亮正改用通过fov参数控制视野方案
         var cameraDirtection = new THREE.Vector3(0, 0, 0);

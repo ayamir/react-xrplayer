@@ -2,14 +2,14 @@
  * 向3D场景中添加可以交互的热点标签或者按钮
  */
 import * as THREE from 'three';
-import { Radius } from '../const/PanoConst';
+import {Radius} from '../const/PanoConst';
 import TWEEN from '@tweenjs/tween.js';
 
 class SpriteShapeHelper {
 
     constructor(scene, camera, renderer, container) {
 
-        console.log("o",container);
+        console.log("o", container);
         this.scene = scene;
         this.camera = camera;
         this.renderer = renderer;
@@ -100,9 +100,11 @@ class SpriteShapeHelper {
     }
 
     createPoint(key, value) {
-        let { lat, lon, res_url, opacity = 1, scale = 16,
+        let {
+            lat, lon, res_url, opacity = 1, scale = 16,
             animate = false, title = null, img_url = null,
-            img_height = 100, img_width = 100, title_width } = value;
+            img_height = 100, img_width = 100, title_width
+        } = value;
         let position = this.contertSph2Rect(lat, lon);
         let meshGroup = new THREE.Group();
         meshGroup.name = key;
@@ -203,8 +205,7 @@ class SpriteShapeHelper {
                         tip.style.display = "block";
                         tip.style.left = screenPos.x - tip.clientWidth / 2 + 30 + "px";
                         tip.style.top = screenPos.y - tip.clientHeight / 2 + 30 + "px";
-                    }
-                    else {
+                    } else {
                         tip.style.display = "none";
                     }
 
@@ -259,10 +260,10 @@ class SpriteShapeHelper {
         let t = 300;
         let scale = mesh.scale;
         let tweenA = new TWEEN.Tween(scale)
-            .to({ x: scale.x * 0.8, y: scale.y * 0.8 }, 500)
+            .to({x: scale.x * 0.8, y: scale.y * 0.8}, 500)
             .delay(100)
         let tweenB = new TWEEN.Tween(scale)
-            .to({ x: scale.x * 1.2, y: scale.y * 1.2 }, 500)
+            .to({x: scale.x * 1.2, y: scale.y * 1.2}, 500)
             .delay(100)
         tweenA.chain(tweenB);
         tweenB.chain(tweenA);
@@ -285,9 +286,9 @@ class SpriteShapeHelper {
         let raycaster = new THREE.Raycaster();
         let mouse = new THREE.Vector2(); // 鼠标的二维设备坐标
         //将屏幕点击的屏幕坐标转化为三维画面平面的坐标，值的范围为-1到1.
-        const { x: domX, y: domY } = this.renderer.domElement.getBoundingClientRect();
+        const {x: domX, y: domY} = this.renderer.domElement.getBoundingClientRect();
         mouse.x = ((event.clientX - domX) / this.renderer.domElement.clientWidth) * 2 - 1;
-        mouse.y = - ((event.clientY - domY) / this.renderer.domElement.clientHeight) * 2 + 1;
+        mouse.y = -((event.clientY - domY) / this.renderer.domElement.clientHeight) * 2 + 1;
         //从相机发射一条射线，经过鼠标点击位置
         // mouse为鼠标的二维设备坐标，camera为射线起点处的相机
         raycaster.setFromCamera(mouse, this.camera);
@@ -321,8 +322,7 @@ class SpriteShapeHelper {
             //如果只需要将第一个触发事件，那就取数组的第一个模型
             if (intersects.length > 0) {
                 document.getElementById('canvas').style.cursor = 'pointer';
-            }
-            else {
+            } else {
                 document.getElementById('canvas').style.cursor = 'default';
             }
         }, true);

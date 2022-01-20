@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 import { MediaPlayer } from "dashjs";
 import * as THREE from "three";
 import TIMINGSRC from "TIMINGSRC";
 import MCorp from "MCorp";
 import SimpleLinearRegression from "ml-regression-simple-linear";
 import CameraChart from "./charts/CameraChart";
+=======
+import {MediaPlayer} from 'dashjs';
+import * as THREE from 'three';
+import TIMINGSRC from 'TIMINGSRC';
+import MCorp from 'MCorp';
+import SimpleLinearRegression from 'ml-regression-simple-linear';
+import CameraChart from './charts/CameraChart';
+>>>>>>> d4ef3f3114a34f50dd5a3127e967a3619313a278
 
 /**
  * @class
@@ -271,6 +280,7 @@ class TiledStreaming {
     }
   };
 
+<<<<<<< HEAD
   loadTiledDash = (resUrls) => {
     this.resUrls = resUrls;
     this.baseDash = MediaPlayer().create();
@@ -296,6 +306,72 @@ class TiledStreaming {
     this.texture.needsUpdate = true;
     return this.texture;
   };
+=======
+    /**
+     * @function
+     * @name TiledStreaming#loadTile
+     * @param {number} id , tile分开的编号
+     * @param {number} level, 加载分块的质量级别
+     */
+    loadTile = (id, level) => {
+        // 动态创建视频
+        if (this.enhanceVideos[id] === null) {
+            let video = document.createElement('video');
+            video.style.background = 'black';
+            video.oncanplay = () => {
+                this.isReady[id] = true;
+            }
+            this.initVideoNode(video, 320, 180);
+            this.enhanceVideos[id] = video;
+            video.load();
+            // TODO 测试，底层使用播放情况
+            // let panel = document.getElementById('operation');
+            // panel.appendChild(video);
+        }
+        // 动态创建Dash
+        let video = this.enhanceVideos[id];
+        if (this.enhanceDash[id] === null) {
+            let dash = MediaPlayer().create();
+            dash.initialize(video, this.resUrls[id + 1], true);
+            dash.updateSettings({
+                'streaming': {
+                    'stableBufferTime': 3, // 一般质量下，稳定期的buffer大小
+                    'bufferTimeAtTopQuality': 5, // 如果使用的是最高质量，给予其更高的buffer长度
+                    'bufferTimeAtTopQualityLongForm': 20, // 当内容被判断为LongForm时，最高质量给予的buffer长度
+                    'longFormContentDurationThreshold': 200, // 多长被判断为long form内容
+                    'scheduleWhilePaused': false,            // 当播放pause时，阻止后台下载
+                    'fastSwitchEnabled': true,               // 当视频的quality发生up时，清空之后的buffer，换取最新版本的内容
+                }
+            });
+            this.enhanceDash[id] = dash;
+        }
+        video.currentTime = this.baseVideo.currentTime;
+        video.play();
+        // 动态创建同步器
+        if (this.videoMediaAsyns[id] === null) {
+            this.videoMediaAsyns[id] = new MCorp.mediaSync(this.enhanceVideos[id], this.timingAsynSrc);
+        } else {
+            this.videoMediaAsyns[id].pause(false);
+        }
+        this.selected[id] = true;
+    }
+
+    /**
+     * @function
+     * @name TiledStreaming#unloadTile
+     * @param {number} id, 写在分块的编号
+     */
+    unloadTile = (id) => {
+        let videoNode = this.enhanceVideos[id];
+        videoNode.pause();
+        let dash = this.enhanceDash[id];
+        dash.pause();
+        // TODO 阻止dash的继续下载
+        this.videoMediaAsyns[id].pause(true);
+        this.isReady[id] = false;
+        this.selected[id] = false;
+    }
+>>>>>>> d4ef3f3114a34f50dd5a3127e967a3619313a278
 
   initVideoNode = (videoInstance, width, height) => {
     videoInstance.width = width;
@@ -449,11 +525,53 @@ class TiledStreaming {
       this.traceX = [];
       this.traceY = [];
     }
+<<<<<<< HEAD
     for (let i = 0; i < this.tileCenter.length; i++) {
       let disSqure = this.getCenterDistanceSqure(i);
       if (disSqure <= 0.1) {
         if (this.selected[i] !== true) {
           this.loadTile(i, 1);
+=======
+
+    /**
+     * @function
+     * @name TiledStreaming#
+     * @description
+     */
+    onCameraPositionUpdate = (lat, lon) => {
+        this.updateCameraPosXY(lat, lon);
+        if (this.detectCounter < 5) {
+            this.detectCounter++;
+            this.traceT.push(this.detectCounter);
+            this.traceX.push(this.x);
+            this.traceY.push(this.y);
+            if (this.detectCounter >= this.predictX.length) {
+                return;
+            }
+            this.errorX += Math.abs(this.x - this.predictX[this.detectCounter]);
+            this.errorY += Math.abs(this.y - this.predictY[this.detectCounter]);
+            this.errorCount++;
+            return;
+        } else {
+            this.detectCounter = 0;
+            // 执行线性回归预测
+            console.log('X的预测MAE=', this.errorX / this.errorCount);
+            console.log('Y的预测MAE=', this.errorY / this.errorCount);
+            ;
+            const regressionX = new SimpleLinearRegression(this.traceT, this.traceX);
+            const regressionY = new SimpleLinearRegression(this.traceT, this.traceY);
+            this.px = this.predictX[this.predictX.length - 1];
+            this.py = this.predictY[this.predictX.length - 1];
+            this.predictX = [];
+            this.predictY = [];
+            for (let i = 5; i < 10; i++) {
+                this.predictX.push(regressionX.predict(i));
+                this.predictY.push(regressionY.predict(i));
+            }
+            this.traceT = [];
+            this.traceX = [];
+            this.traceY = [];
+>>>>>>> d4ef3f3114a34f50dd5a3127e967a3619313a278
         }
       } else {
         if (this.selected[i] === true) {

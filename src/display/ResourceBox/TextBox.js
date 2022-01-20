@@ -9,17 +9,17 @@ class TextBox {
         this.message = "请输入文字";                                  //文字
         this.font = "Arial";                                        //字体
         this.fontSize = 36;                                         //字体大小
-        this.fontColor = { r:255, g:255, b:255, a:1.0 };            //字体颜色（默认白色不透明）
+        this.fontColor = {r: 255, g: 255, b: 255, a: 1.0};            //字体颜色（默认白色不透明）
         this.borderDistanceX = 15;                                  //左边距
         this.borderDistanceY = 15;                                  //上边距
         this.borderThickness = 5;                                   //边框粗细
         this.borderWidth = 190;                                     //边框宽
         this.borderHeight = 60;                                     //边框高
-        this.borderColor = { r:100, g:100, b:100, a:0.5 };          //边框颜色（默认灰色半透明）
-        this.backgroundColor = { r:100, g:100, b:100, a:0.5 };      //背景颜色（默认灰色半透明）
+        this.borderColor = {r: 100, g: 100, b: 100, a: 0.5};          //边框颜色（默认灰色半透明）
+        this.backgroundColor = {r: 100, g: 100, b: 100, a: 0.5};      //背景颜色（默认灰色半透明）
         this.scaleX = 0.8;                                          //文本框缩放比例X
         this.scaleY = 0.8;                                          //文本框缩放比例Y
-        this.position = new THREE.Vector3(0,0,0);          //文本框位置
+        this.position = new THREE.Vector3(0, 0, 0);          //文本框位置
         this.cameraPosition = null;                                 //文本框初始朝向
         this.widthAdaptation = false;                               //根据文本自适应设置borderWidth，borderHeight。若关闭，则根据设定borderWidth自动换行，自适应borderHeight
         this.draggable = false;                                     //可拖拽改变位置
@@ -108,8 +108,7 @@ class TextBox {
         }
         if (parameters.hasOwnProperty("position")) {
             this.position = parameters.position;
-        }
-        else {
+        } else {
             this.position = this.planeMesh.position;
         }
         if (parameters.hasOwnProperty("cameraPosition")) {
@@ -141,7 +140,7 @@ class TextBox {
     updateCanvas = () => {
         const r = 12;//圆角矩形的圆半径
         this.adjustWidthAndHeight(r);
-        this.roundRect(0,0,this.borderWidth,this.borderHeight,r);
+        this.roundRect(0, 0, this.borderWidth, this.borderHeight, r);
         this.fillMessage();
     }
 
@@ -154,15 +153,14 @@ class TextBox {
             this.canvasHeight = this.borderHeight + r * 2 + this.borderThickness * 2;
             this.canvas.width = this.canvasWidth;
             this.canvas.height = this.canvasHeight;
-        }
-        else {
+        } else {
             this.canvasWidth = this.borderWidth + r * 2 + this.borderThickness * 2;
             this.canvas.width = this.canvasWidth;
             this.context.font = "Bold " + this.fontSize + "px " + this.font;
             let lineWidth = this.borderDistanceX * 2;
             let canvasWidth = this.canvasWidth;
             let deltaHeight = this.fontSize + 2 + this.borderDistanceY; //当前行距边框顶部的距离(2是行间距)
-            for(let i = 0; i < this.message.length; i++) {
+            for (let i = 0; i < this.message.length; i++) {
                 let dLength = this.context.measureText(this.message[i]).width;
                 lineWidth += dLength;
                 if (lineWidth > canvasWidth) {
@@ -184,8 +182,8 @@ class TextBox {
         let lineWidth = this.borderDistanceX * 2;
         let canvasWidth = this.canvas.width;    //计算canvas的宽度
         let deltaHeight = this.fontSize + 2 + this.borderDistanceY; //当前行距边框顶部的距离
-        let lastSubStrIndex= 0; //每次开始截取的字符串的索引
-        for(let i = 0; i < this.message.length; i++) {
+        let lastSubStrIndex = 0; //每次开始截取的字符串的索引
+        for (let i = 0; i < this.message.length; i++) {
             let dLength = this.context.measureText(this.message[i]).width;
             lineWidth += dLength;
             if (lineWidth > canvasWidth) {
@@ -203,7 +201,7 @@ class TextBox {
     //在画布上画一个圆角矩形，x0,y0:起始坐标，x,y:除去半径的宽和高, r:半径
     roundRect = (x0, y0, x, y, r) => {
         let ctx = this.context;
-        ctx.fillStyle   = "rgba(" + this.backgroundColor.r + "," + this.backgroundColor.g + ","
+        ctx.fillStyle = "rgba(" + this.backgroundColor.r + "," + this.backgroundColor.g + ","
             + this.backgroundColor.b + "," + this.backgroundColor.a + ")";
         // 边框的颜色
         ctx.strokeStyle = "rgba(" + this.borderColor.r + "," + this.borderColor.g + ","
@@ -212,15 +210,15 @@ class TextBox {
         let lineW = ctx.lineWidth;
         //先使用圆角矩形作为文本框，以后有需求可以设计更多文本框样式
         ctx.beginPath();
-        ctx.moveTo(x0+r+lineW/2, y0+lineW/2);
-        ctx.lineTo(x0+x+r+lineW/2, y0+lineW/2);
-        ctx.arc(x0+x+r+lineW/2, y0+lineW/2+r, r, -Math.PI/2, 0);
-        ctx.lineTo(x0+x+2*r+lineW/2, y0+y+r+lineW/2);
-        ctx.arc(x0+x+r+lineW/2, y0+y+r+lineW/2, r, 0, Math.PI/2);
-        ctx.lineTo(x0+r+lineW/2, y0+y+2*r+lineW/2);
-        ctx.arc(x0+r+lineW/2, y0+y+r+lineW/2, r, Math.PI/2, Math.PI);
-        ctx.lineTo(x0+lineW/2, y0+r+lineW/2);
-        ctx.arc(x0+r+lineW/2, y0+r+lineW/2, r, Math.PI, 1.5*Math.PI);
+        ctx.moveTo(x0 + r + lineW / 2, y0 + lineW / 2);
+        ctx.lineTo(x0 + x + r + lineW / 2, y0 + lineW / 2);
+        ctx.arc(x0 + x + r + lineW / 2, y0 + lineW / 2 + r, r, -Math.PI / 2, 0);
+        ctx.lineTo(x0 + x + 2 * r + lineW / 2, y0 + y + r + lineW / 2);
+        ctx.arc(x0 + x + r + lineW / 2, y0 + y + r + lineW / 2, r, 0, Math.PI / 2);
+        ctx.lineTo(x0 + r + lineW / 2, y0 + y + 2 * r + lineW / 2);
+        ctx.arc(x0 + r + lineW / 2, y0 + y + r + lineW / 2, r, Math.PI / 2, Math.PI);
+        ctx.lineTo(x0 + lineW / 2, y0 + r + lineW / 2);
+        ctx.arc(x0 + r + lineW / 2, y0 + r + lineW / 2, r, Math.PI, 1.5 * Math.PI);
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
@@ -275,7 +273,7 @@ class TextBox {
     }
 
     update2DCanvas = () => {
-        this.canvas.style.transform = "scale("+this.scaleX+","+this.scaleY+")";
+        this.canvas.style.transform = "scale(" + this.scaleX + "," + this.scaleY + ")";
     }
 
     update2DPosition = () => {
@@ -283,14 +281,13 @@ class TextBox {
         if (tip) {
             let wpPosition = new THREE.Vector3();
             let pos = this.planeMesh.getWorldPosition(wpPosition).applyMatrix4(this.camera.matrixWorldInverse).applyMatrix4(this.camera.projectionMatrix);
-            if ((pos.x >= -1 && pos.x <= (1 - this.canvas.width/this.container.clientWidth)) && (pos.y >= -(1 - this.canvas.height/this.container.clientHeight) && pos.y <= 1) && (pos.z >= -1 && pos.z <= 1)) {
+            if ((pos.x >= -1 && pos.x <= (1 - this.canvas.width / this.container.clientWidth)) && (pos.y >= -(1 - this.canvas.height / this.container.clientHeight) && pos.y <= 1) && (pos.z >= -1 && pos.z <= 1)) {
                 if (this.hidden === false && this.showType === '2d')
                     tip.style.display = "block";
                 let screenPos = this.objectPosToScreenPos(this.planeMesh, this.container, this.camera);
                 tip.style.left = screenPos.x - tip.clientWidth / 2 + "px";
                 tip.style.top = screenPos.y - tip.clientHeight + 0.5 * this.canvas.height + "px";
-            }
-            else {
+            } else {
                 tip.style.display = "none";
             }
         }
@@ -324,8 +321,7 @@ class TextBox {
         if (this.showType === "embedded") {
             this.planeMesh.visible = true;
             this.canvas.style.display = "none";
-        }
-        else if (this.showType === "2d") {
+        } else if (this.showType === "2d") {
             this.planeMesh.visible = false;
             this.canvas.style.display = "block";
         }
@@ -348,8 +344,7 @@ class TextBox {
                 this.canvas.style.display = "none";
                 console.log("set embedded");
             }
-        }
-        else if (type === "2d") {
+        } else if (type === "2d") {
             this.showType = type;
             if (this.hidden === false) {
                 this.planeMesh.visible = false;

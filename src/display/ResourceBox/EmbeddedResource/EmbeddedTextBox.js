@@ -13,9 +13,9 @@ class EmbeddedTextBox extends EmbeddedBox {
         this.maxWidth = 100;     //一行中文字占用的最多像素，超过就换行
         this.borderDistanceX = 15;  //左边距
         this.borderDistanceY = 15;  //上边距
-        this.fontColor = { r: 255, g: 255, b: 255, a: 1.0 };    //字体颜色（默认白色不透明）
-        this.borderColor = { r: 100, g: 100, b: 100, a: 0.5 };  //边框颜色（默认灰色半透明）
-        this.backgroundColor = { r: 100, g: 100, b: 100, a: 0.5 };  //背景颜色（默认灰色半透明）
+        this.fontColor = {r: 255, g: 255, b: 255, a: 1.0};    //字体颜色（默认白色不透明）
+        this.borderColor = {r: 100, g: 100, b: 100, a: 0.5};  //边框颜色（默认灰色半透明）
+        this.backgroundColor = {r: 100, g: 100, b: 100, a: 0.5};  //背景颜色（默认灰色半透明）
 
         this.showTypeChangable = true;
         this.update();
@@ -46,7 +46,7 @@ class EmbeddedTextBox extends EmbeddedBox {
     }
 
     getTextInfo = () => {
-        return { text: this.text };
+        return {text: this.text};
     }
 
     //内部控件
@@ -74,8 +74,7 @@ class EmbeddedTextBox extends EmbeddedBox {
             this.borderHeight = this.fontSize * 0.9 + this.borderDistanceY * 2;
             this.canvas.width = this.borderWidth + r * 2 + this.borderThickness * 2;
             this.canvas.height = this.borderHeight + r * 2 + this.borderThickness * 2;
-        }
-        else {
+        } else {
             this.canvas.width = this.maxWidth + r * 2 + this.borderThickness * 2;
             this.context.font = "Bold " + this.fontSize + "px " + this.font;
             let lineWidth = this.borderDistanceX * 2;
