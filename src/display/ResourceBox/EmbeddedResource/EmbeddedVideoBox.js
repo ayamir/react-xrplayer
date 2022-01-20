@@ -1,7 +1,7 @@
 import EmbeddedBox from "./EmbeddedBox";
 import * as THREE from "three";
 
-class EmbeddedVideoBox extends EmbeddedBox {
+class EmbeddedVideoBox extends EmbeddedBox{
     constructor(id) {
         super(id, 'video');
         this.url = '';

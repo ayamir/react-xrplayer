@@ -181,11 +181,11 @@ class VRHelper {
     render = (scene, camera) => {
         if (this.vrStatus) {
             this.effect.render(scene, camera);
-            var pickedObject = this.pick({x: 0, y: 0},
+            var pickedObject = this.pick({ x: 0, y: 0 },
                 camera, this.time, Array.from(this.objects));
             if (!!pickedObject) {
                 this.onObjectInteractionHandler &&
-                this.onObjectInteractionHandler(pickedObject);
+                    this.onObjectInteractionHandler(pickedObject);
             }
         }
     }

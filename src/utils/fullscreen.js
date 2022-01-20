@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import fscreen from "fscreen";
 
@@ -68,7 +68,7 @@ class FullScreen extends Component {
                 //className={className.join(" ")}
                 ref={node => (this.node = node)}
                 style={
-                    {height: "100%", width: "100%"}
+                    { height: "100%", width: "100%" }
                 }
             >
                 {this.props.children}

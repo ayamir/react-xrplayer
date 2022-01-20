@@ -1,4 +1,4 @@
-import {Chart} from '@antv/g2';
+import { Chart } from '@antv/g2';
 
 
 /**
@@ -95,12 +95,12 @@ class CameraChart {
         chart.legend({
             custom: 'true',
             items: [
-                {name: 'x', value: 'x', marker: {symbol: 'line', style: {stroke: '#1890ff', lineWidth: 2}}},
-                {name: 'y', value: 'y', marker: {symbol: 'line', style: {stroke: '#ff00ff', lineWidth: 2}}},
-                {name: 'predictX', value: 'px', marker: {symbol: 'line', style: {stroke: '#80ff00', lineWidth: 2}}},
-                {name: 'predictY', value: 'py', marker: {symbol: 'line', style: {stroke: '#ff0000', lineWidth: 2}}},
-                {name: 'errorX', value: 'errX', marker: {symbol: 'line', style: {stroke: '#ffff00', lineWidth: 2}}},
-                {name: 'errorY', value: 'errY', marker: {symbol: 'line', style: {stroke: '#ff8000', lineWidth: 2}}},
+                { name: 'x', value: 'x', marker: { symbol: 'line', style: { stroke: '#1890ff', lineWidth: 2 } } },
+                { name: 'y', value: 'y', marker: { symbol: 'line', style: { stroke: '#ff00ff', lineWidth: 2 } } },
+                { name: 'predictX', value: 'px', marker: { symbol: 'line', style: { stroke: '#80ff00', lineWidth: 2 } } },
+                { name: 'predictY', value: 'py', marker: { symbol: 'line', style: { stroke: '#ff0000', lineWidth: 2 } } },
+                { name: 'errorX', value: 'errX', marker: { symbol: 'line', style: { stroke: '#ffff00', lineWidth: 2 } } },
+                { name: 'errorY', value: 'errY', marker: { symbol: 'line', style: { stroke: '#ff8000', lineWidth: 2 } } },
 
             ],
         });

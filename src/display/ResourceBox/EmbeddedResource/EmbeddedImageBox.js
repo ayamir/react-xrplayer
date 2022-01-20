@@ -1,6 +1,6 @@
 import EmbeddedBox from "./EmbeddedBox";
 
-class EmbeddedImageBox extends EmbeddedBox {
+class EmbeddedImageBox extends EmbeddedBox{
     constructor(id) {
         super(id, 'image');
         this.url = '';

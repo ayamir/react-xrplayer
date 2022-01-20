@@ -13,7 +13,7 @@ class HotSpotHelper {
 
     addIcons = (iconList) => {
         for (var i = 0; i < iconList.length; i++) {
-            const {img, position, name, title, width, height} = iconList;
+            const { img, position, name, title, width, height } = iconList;
             this.markIcon(img, position, name, title, width, height);
         }
     }
@@ -33,11 +33,7 @@ class HotSpotHelper {
         var w = width || 0.08;
         var h = height || 0.08;
         var textureLoader = new THREE.TextureLoader();
-        var material = new THREE.MeshBasicMaterial({
-            map: textureLoader.load(img),
-            side: THREE.DoubleSide,
-            transparent: true
-        });
+        var material = new THREE.MeshBasicMaterial({ map: textureLoader.load(img), side: THREE.DoubleSide, transparent: true });
         var geometry = new THREE.PlaneGeometry(w, h);
         var mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(position.x, position.y, position.z);
@@ -112,6 +108,7 @@ class HotSpotHelper {
             }
         }
     }
+
 
 
     // bindRaycaster = function (event, callback) {

@@ -133,9 +133,9 @@ class EmbeddedBoxManager {
         let raycaster = new THREE.Raycaster();
         let mouse = new THREE.Vector2();
         let xrManager = this.XRManager;
-        const {x: domX, y: domY} = xrManager.renderer.domElement.getBoundingClientRect();
+        const { x: domX, y: domY } = xrManager.renderer.domElement.getBoundingClientRect();
         mouse.x = ((clientX - domX) / xrManager.renderer.domElement.clientWidth) * 2 - 1;
-        mouse.y = -((clientY - domY) / xrManager.renderer.domElement.clientHeight) * 2 + 1;
+        mouse.y = - ((clientY - domY) / xrManager.renderer.domElement.clientHeight) * 2 + 1;
         raycaster.setFromCamera(mouse, xrManager.camera);
         return raycaster.intersectObjects(meshes);
     }
@@ -152,14 +152,16 @@ class EmbeddedBoxManager {
             if ((pos.x >= -1 && pos.x <= (1 - tip.width / container.clientWidth)) && (pos.y >= -(1 - tip.height / container.clientHeight) && pos.y <= 1) && (pos.z >= -1 && pos.z <= 1)) {
                 if (box.visible === true && box.showType === '2d') {
                     ans.display = "block";
-                } else {
+                }
+                else {
                     ans.display = "none";
                 }
 
                 let screenPos = this.objectPosToScreenPos(box.planeMesh, container, camera);
                 ans.left = screenPos.x - tip.clientWidth / 2 + "px";
                 ans.top = screenPos.y - tip.clientHeight + 0.5 * tip.height + "px";
-            } else {
+            }
+            else {
                 ans.display = "none";
             }
         }
@@ -194,7 +196,8 @@ class EmbeddedBoxManager {
         let intersects = this.getIntersects(event.clientX, event.clientY, [...this.dragMeshes]);
         if (intersects.length > 0) {
             this.XRManager.mount.style.cursor = 'pointer';
-        } else {
+        }
+        else {
             this.XRManager.mount.style.cursor = 'default';
         }
         if (this.isUserInteracting === true) {
@@ -282,5 +285,4 @@ class EmbeddedBoxManager {
         }
     }
 }
-
 export default EmbeddedBoxManager;

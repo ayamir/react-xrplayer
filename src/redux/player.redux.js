@@ -15,13 +15,13 @@ const initialState = {
 export function player(state = initialState, action) {
     switch (action.type) {
         case ENABLE_EFFECT_CONTAINER:
-            return {...state, is_effect_displaying: action.payload};
+            return { ...state, is_effect_displaying: action.payload };
         case EFFECT_DATA:
-            return {...state, effect_data: action.payload};
+            return { ...state, effect_data: action.payload };
         case VOLUME:
-            return {...state, volume: action.payload};
+            return { ...state, volume: action.payload };
         case MUTED:
-            return {...state, muted: action.payload}
+            return { ...state, muted: action.payload }
         default:
             return state;
     }
