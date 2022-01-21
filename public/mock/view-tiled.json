@@ -1,29 +1,39 @@
 {
-  "camera_fov": 100,
-  "auto_rotate_speed": 1.0,
-  "enable_auto_rotate": false,
-  "volume": 90,
-  "muted": true,
-  "res_urls": [
-    {
-      "type": "tiled-dash",
-      "res_url": [
-        "http://10.112.74.193:80/~ayamir/070/output/stream.mpd",
-        "http://10.112.74.193:80/~ayamir/070/tile_0_0/output/stream.mpd",
-        "http://10.112.74.193:80/~ayamir/070/tile_1_0/output/stream.mpd",
-        "http://10.112.74.193:80/~ayamir/070/tile_2_0/output/stream.mpd",
-        "http://10.112.74.193:80/~ayamir/070/tile_3_0/output/stream.mpd",
-        "http://10.112.74.193:80/~ayamir/070/tile_0_1/output/stream.mpd",
-        "http://10.112.74.193:80/~ayamir/070/tile_1_1/output/stream.mpd",
-        "http://10.112.74.193:80/~ayamir/070/tile_2_1/output/stream.mpd",
-        "http://10.112.74.193:80/~ayamir/070/tile_3_1/output/stream.mpd",
-        "http://10.112.74.193:80/~ayamir/070/tile_0_2/output/stream.mpd",
-        "http://10.112.74.193:80/~ayamir/070/tile_1_2/output/stream.mpd",
-        "http://10.112.74.193:80/~ayamir/070/tile_2_2/output/stream.mpd",
-        "http://10.112.74.193:80/~ayamir/070/tile_3_2/output/stream.mpd"
-      ],
-      "panoramic_type": "360",
-      "radius": 500
-    }
-  ]
+    "camera_fov": 100,
+    "auto_rotate_speed": 1.0,
+    "enable_auto_rotate": false,
+    "volume": 90,
+    "muted": false,
+    "res_urls": [
+        {
+            "type": "tiled-dash",
+            "res_url": [
+                "http://localhost:80/~ayamir/070/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_0_0/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_1_0/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_2_0/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_3_0/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_4_0/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_0_1/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_1_1/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_2_1/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_3_1/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_4_1/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_0_2/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_1_2/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_2_2/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_3_2/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_4_2/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_0_3/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_1_3/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_2_3/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_3_3/output/stream.mpd",
+                "http://localhost:80/~ayamir/070/tile_4_3/output/stream.mpd"
+            ],
+            "rows": 5,
+            "cols": 4,
+            "panoramic_type": "360",
+            "radius": 500
+        }
+    ]
 }

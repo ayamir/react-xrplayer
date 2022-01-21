@@ -5,14 +5,15 @@
 import Hls from 'hls.js';
 import * as THREE from 'three';
 import flvjs from 'flv.js/dist/flv.min.js';
-import { OS } from '../utils/osuitls';
-import { MediaPlayer } from 'dashjs';
+import {OS} from '../utils/osuitls';
+import {MediaPlayer} from 'dashjs';
 import TiledStreaming from './tiled/TiledStreaming';
+
 /**
  * @class
  * @name TextureHelper
  * @description  负责加载全景背景的纹理数据，由XRManager创建,无法独立创建。支持img,mp4,hls,dash,flv,dash-tile等多种媒体形式，并提供对各类媒体播放的控制接口
- * @param {Element} video h5 video 实例 
+ * @param {Element} video h5 video 实例
  * @return {TextureHelper} 背景纹理管理
  */
 class TextureHelper {
@@ -29,6 +30,8 @@ class TextureHelper {
         this.videoLoader = null;
         this.resType = 'image'
         this.resUrl = '';
+        this.rows = 4;
+        this.cols = 3;
         this.tiledStreaming = null;
     }
 
@@ -152,17 +155,18 @@ class TextureHelper {
         return this.getTextureFromVideo(this.containerNode);
     }
 
-    loadTiledDash = (resUrls) => {
+    loadTiledDash = (resUrls, rows, cols) => {
         this.resUrl = resUrls;
+        this.rows = rows;
+        this.cols = cols;
         this.initVideoNode();
         this.tiledStreaming = new TiledStreaming(this.containerNode);
-        return this.tiledStreaming.loadTiledDash(resUrls);
+        return this.tiledStreaming.loadTiledDash(resUrls, rows, cols);
     }
 
     loadTexture = (resource) => {
-        const { type, res_url } = resource[0];
+        const {type, res_url, rows, cols} = resource[0];
         this.resType = type;
-        this.resUrl = res_url;
         switch (type) {
             case 'hls':
                 return this.loadHlsVideo(res_url);
@@ -175,7 +179,7 @@ class TextureHelper {
             case 'dash':
                 return this.loadDash(res_url);
             case 'tiled-dash':
-                return this.loadTiledDash(res_url);
+                return this.loadTiledDash(res_url, rows, cols);
             default:
                 return null;
         }
