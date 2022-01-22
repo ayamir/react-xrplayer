@@ -90,8 +90,8 @@ class TiledStreaming {
 		let unitWidth = 0.5 / cols;
 		let unitHeight = 0.5 / rows;
 		this.tileCenter = [];
-		for (let i = 0; i < rows; i++) {
-			for (let j = 0; j < cols; j++) {
+		for (let i = 0; i < cols; i++) {
+			for (let j = 0; j < rows; j++) {
 				let x = unitWidth * 2 * i + unitWidth;
 				let y = unitHeight * 2 * j + unitHeight;
 				let point = [x, y];
@@ -320,10 +320,10 @@ class TiledStreaming {
 		this.ctx.strokeStyle = "rgb(102, 255, 102)";
 		this.ctx.drawImage(this.baseVideo, 0, 0, 1024, 512);
 
-		for (let i = 0; i < this.rows; i++) {
+		for (let i = 0; i < this.cols; i++) {
 			let width = 1024 / this.rows;
 			let height = 512 / this.cols;
-			for (let j = 0; j < this.cols; j++) {
+			for (let j = 0; j < this.rows; j++) {
 				let index = j + i * this.rows;
 				if (this.selected[index] && this.isReady[index]) {
 					this.ctx.drawImage(this.enhanceVideos[index], j * width, i * height, width, height);
