@@ -6,58 +6,59 @@ import ObjLoader from './loader/ObjLoader';
 
 class CenterModelHelper {
 
-    constructor(scene) {
-        this.scene = scene;
-        this.modelLoaderMap = new Map();
-    }
+	constructor(scene) {
+		this.scene = scene;
+		this.modelLoaderMap = new Map();
+	}
 
-    loadModel = (model_key, model) => {
-        const promise = new Promise((resolve, reject) => {
-            const loader = this.getLoader(model);
-            this.modelLoaderMap.set(model_key, loader);
-            loader.loadObj(model);
-            resolve();
-        }).catch((reason) => {
-        })
-        promise.then();
-    }
+	loadModel = (model_key, model) => {
+		const promise = new Promise((resolve, reject) => {
+			const loader = this.getLoader(model);
+			this.modelLoaderMap.set(model_key, loader);
+			loader.loadObj(model);
+			resolve();
+		}).catch((reason) => {
+		})
+		promise.then();
+	}
 
-    loadModelList = (model_list) => {
-        model_list && model_list.forEach(data => {
-            this.loadModel(data[0], data[1])
-        })
-    }
+	loadModelList = (model_list) => {
+		model_list && model_list.forEach(data => {
+			this.loadModel(data[0], data[1])
+		})
+	}
 
-    removeModel = (model_key) => {
-        const modelLoader = this.modelLoaderMap.get(model_key);
-        modelLoader && modelLoader.remove();
-        this.modelLoaderMap.delete(model_key);
-    }
+	removeModel = (model_key) => {
+		const modelLoader = this.modelLoaderMap.get(model_key);
+		modelLoader && modelLoader.remove();
+		this.modelLoaderMap.delete(model_key);
+	}
 
-    removeAllModel = () => {
-        const loaderArray = Array.from(this.modelLoaderMap.values());
-        loaderArray.forEach(loader => {
-            loader.remove();
-        });
-        this.modelLoaderMap.clear();
-    }
+	removeAllModel = () => {
+		const loaderArray = Array.from(this.modelLoaderMap.values());
+		loaderArray.forEach(loader => {
+			loader.remove();
+		});
+		this.modelLoaderMap.clear();
+	}
 
-    getLoader = (data) => {
-        switch (data.modeFormat) {
-            case 'fbx':
-                return new FBXLoader(this.scene);
-            case 'obj':
-                return new ObjLoader(this.scene);
-            default: return null;
-        }
-    }
+	getLoader = (data) => {
+		switch (data.modeFormat) {
+			case 'fbx':
+				return new FBXLoader(this.scene);
+			case 'obj':
+				return new ObjLoader(this.scene);
+			default:
+				return null;
+		}
+	}
 
-    update = () => {
-        this.modelLoaderMap.forEach(data => {
-            const loader = data;
-            loader && loader.update();
-        })
-    }
+	update = () => {
+		this.modelLoaderMap.forEach(data => {
+			const loader = data;
+			loader && loader.update();
+		})
+	}
 }
 
 export default CenterModelHelper;
