@@ -254,6 +254,9 @@ class TiledDemo extends React.Component {
 					<button onClick={() => this.setState({operation_state: "none"})}>
 						关闭
 					</button>
+					<button onClick={() => this.setState({isFullScreen: true})} >
+						全屏
+					</button>
 				</div>
 			</div>
 		);

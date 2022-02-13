@@ -47,7 +47,6 @@ class XRPlayerManager {
 		this.sceneContainer = null; // 全景背景挂载节点
 		this.sceneTextureHelper = null; //全景场景纹理加载控制器
 
-
 		this.innerViewControls = null;
 		this.spriteShapeHelper = null;
 		this.spriteParticleHelper = null; // 粒子展示
@@ -77,13 +76,19 @@ class XRPlayerManager {
 		this.textHelper = null;
 		this.textBoxes = new Set();
 
+		this.xrSession = null;
+		this.originReferenceSpace = null;
+		this.xrReferenceSpace = null;
+
 		this.init();
 	}
 
 	init = () => {
+		this.checkForXR();
 		this.initCamera();
-		this.initScene();
 		this.initRenderer();
+		this.initScene();
+		this.initController();
 		this.initVR();
 		this.initTextHelper();
 		this.animate(0);
@@ -94,15 +99,23 @@ class XRPlayerManager {
 			camera_fov, camera_far, camera_near,
 			camera_position: position, camera_target: target
 		} = this.props;
+
 		const camera = new THREE.PerspectiveCamera(
 			camera_fov, this.mount.clientWidth / this.mount.clientHeight,
 			camera_near, camera_far);
-		const renderer = new THREE.WebGLRenderer({antialias: true});
-		this.renderer = renderer;
 		camera.position.set(position.x, position.y, position.z);
 		camera.target = new THREE.Vector3(target.x, target.y, target.z);
 		this.camera = camera;
-		this.innerViewControls = new InnerViewControls(this.camera);
+	}
+
+	initRenderer = () => {
+		const renderer = new THREE.WebGLRenderer({antialias: true});
+		renderer.setPixelRatio(window.devicePixelRatio);
+		renderer.setSize(this.mount.clientWidth, this.mount.clientHeight);
+		renderer.sortObjects = false;
+		renderer.autoClear = false;
+		this.mount.appendChild(renderer.domElement);
+		this.renderer = renderer;
 	}
 
 	initScene = () => {
@@ -111,8 +124,14 @@ class XRPlayerManager {
 			axes_helper_display: isAxesHelperDisplay,
 			camera_helper_display: isCameraHelperDisplay
 		} = this.props;
+
 		const {panoramic_type = '360', radius = 500, height = 1000} = textureResource;
+
+		this.scene = new THREE.Scene();
 		this.sceneContainer = document.getElementById('video');
+		this.sceneTextureHelper = new TextureHelper(this.sceneContainer);
+		this.sceneTextureHelper.onCanPlayHandler = (resUrl) => this.handler('scene_res_ready', {resUrl: resUrl});
+
 		let geometry;
 		if (panoramic_type === '180') {
 			geometry = new THREE.CylinderGeometry(radius, radius, height, 40, 40, true); // 球体
@@ -120,31 +139,26 @@ class XRPlayerManager {
 			geometry = new THREE.SphereBufferGeometry(radius, 80, 40); // 球体
 		}
 		geometry.scale(-1, 1, 1);
-		this.sceneTextureHelper = new TextureHelper(this.sceneContainer);
-		this.sceneTextureHelper.onCanPlayHandler = (resUrl) => this.handler('sence_res_ready', {resUrl: resUrl});
+
 		let texture = this.sceneTextureHelper.loadTexture(textureResource);
 		let material = new THREE.MeshBasicMaterial({map: texture});
 		this.sceneMesh = new THREE.Mesh(geometry, material);
-		this.scene = new THREE.Scene();
+
 		this.scene.add(this.sceneMesh);
+		this.scene.add(this.camera);
+
 		if (isAxesHelperDisplay) {
 			let axisHelper = new THREE.AxesHelper(1000)//每个轴的长度
 			this.scene.add(axisHelper);
 		}
-		this.scene.add(this.camera);
 		if (isCameraHelperDisplay) {
 			this.cameraHelper = new THREE.CameraHelper(this.camera);
 			this.scene.add(this.cameraHelper)
 		}
 	}
 
-	initRenderer = () => {
-		const renderer = this.renderer;
-		renderer.setPixelRatio(window.devicePixelRatio);
-		renderer.setSize(this.mount.clientWidth, this.mount.clientHeight);
-		renderer.sortObjects = false;
-		renderer.autoClear = false;
-		this.mount.appendChild(renderer.domElement);
+	initController = () => {
+		this.innerViewControls = new InnerViewControls(this.camera, this.scene, this.renderer);
 	}
 
 	initVR = () => {
@@ -837,6 +851,122 @@ class XRPlayerManager {
 		pos.y = distance * Math.cos(phi);
 		pos.z = distance * Math.sin(phi) * Math.sin(theta);
 		return pos;
+	}
+
+	checkForXR = () => {
+		if (navigator.xr === undefined) {
+			console.log("WebXR Device API is not supported in this browser.");
+			return;
+		}
+		console.log(navigator.xr);
+		navigator.xr.isSessionSupported('immersive-vr').then(() => {
+			console.log('VR Immersive is supported.');
+			this.createPresentationButton();
+		})
+	}
+
+	createPresentationButton = () => {
+		this.button = document.createElement('button');
+		this.button.classList.add('vr-toggle');
+		this.button.textContent = "Switch to VR";
+		this.button.addEventListener('click', () => {
+			this.toggleVR();
+		})
+		document.body.appendChild(this.button);
+	}
+
+	onSessionEnded() {
+
+	}
+
+	setupControllerRaycast(raycaster, rayMatrix) {
+		let raycasterOrigin = new THREE.Vector3();
+		let raycasterDestination = new THREE.Vector3(0, 0, -1);
+		raycasterOrigin.setFromMatrixPosition(rayMatrix);
+		raycaster.set(raycasterOrigin, raycasterDestination.transformDirection(rayMatrix).normalize());
+	}
+
+	handleSelect(event) {
+		let rayPose = event.frame.getPose(event.inputSource.targetRaySpace, this.xrReferenceSpace);
+		if (!rayPose) {
+			return;
+		}
+		let pointerMatrix = new THREE.Matrix4();
+		pointerMatrix.fromArray(rayPose.transform.matrix);
+		let raycaster = new THREE.Raycaster();
+		this.setupControllerRaycast(raycaster, pointerMatrix);
+		let intersects = raycaster.intersectObject(this.floor);
+		for (let intersect of intersects) {
+			let position = new THREE.Vector3();
+			position.copy(intersect.point);
+			position.negate();
+			// this.xrReferenceSpace = this.originReferenceSpace.getOffsetReferenceSpace(
+			// 	new XRRigidTransform({x: position.x, y: position.y, z: position.z})
+			// );
+			break;
+		}
+	}
+
+	async toggleVR() {
+		if (!this.renderer.domElement.hidden && this.xrSession) {
+			return this.deactivateVR();
+		}
+
+		if (this.renderer.domElement.hidden && this.xrSession) {
+			await this.xrSession.end();
+			this.xrSession = null;
+			this.xrReferenceSpace = null;
+		}
+		return this.activateVR();
+	}
+
+	async deactivateVR() {
+		if (!this.xrSession) {
+			return;
+		}
+
+		await this.xrSession.end();
+	}
+
+	async activateVR() {
+		try {
+			this.xrSession = await navigator.xr.requestSession('immersive-vr', {
+				// 3DoF
+				requiredFeatures: ['local-floor'],
+				// 6DoF
+				optionalFeatures: ['bounded-floor']
+			});
+			this.xrSession.addEventListener('end', () => {
+				this.onSessionEnded();
+			})
+
+			const {camera_near, camera_far} = this.props;
+			this.xrSession.depthNear = camera_near;
+			this.xrSession.depthFar = camera_far;
+
+			try {
+				this.xrReferenceSpace = await this.xrSession.requestReferenceSpace('bounded-floor');
+			} catch (e) {
+				this.xrReferenceSpace = await this.xrSession.requestReferenceSpace('local-floor');
+			}
+
+			this.originReferenceSpace = this.xrReferenceSpace;
+			this.xrSession.addEventListener('select', (...args) => this.handleSelect(...args));
+
+			// 创建WebGL层
+			await this.renderer.getContext().makeXRCompatible();
+			this.renderer.domElement.hidden = false;
+			// const { XRWebGLLayer } = window;
+			// let layer = new XRWebGLLayer(this.xrSession, this.renderer.getContext());
+			// this.xrSession.updateRenderState({baseLayer: layer});
+
+			this.xrSession.requestAnimationFrame((...args) => this.update(...args));
+		} catch (e) {
+			console.log("Error while requesting the immersive session: " + e);
+			this.onSessionEnded();
+		}
+
+
 	}
 }
 

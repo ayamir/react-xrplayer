@@ -78,7 +78,7 @@ class XRPlayer extends Component {
 			case 'global_volume':
 				this.props.setGlobalVolume(props.volume);
 				break;
-			case 'sence_res_ready':
+			case 'scene_res_ready':
 				break;
 			default:
 				break;
@@ -173,16 +173,20 @@ class XRPlayer extends Component {
 XRPlayer.protoTypes = {
 	width: Proptypes.string,
 	height: Proptypes.string,
+
 	camera_fov: Proptypes.number,
 	camera_near: Proptypes.number,
 	camera_far: Proptypes.number,
+
 	camera_position: Proptypes.object,
 	camera_target: Proptypes.object,
+
 	scene_texture_resource: Proptypes.array,
-	axes_helper_display: Proptypes.bool,
 	hot_spot_list: Proptypes.array,
 	event_list: Proptypes.array,
+
 	is_full_screen: Proptypes.bool,
+	axes_helper_display: Proptypes.bool,
 	camera_helper_display: Proptypes.bool,
 
 	onCreated: Proptypes.func,

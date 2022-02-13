@@ -391,8 +391,8 @@ class TiledStreaming {
 			this.traceY = [];
 		}
 		for (let i = 0; i < this.tileCenter.length; i++) {
-			let disSqure = this.getCenterDistanceSqure(i);
-			if (disSqure <= 0.1) {
+			let disSquare = this.getCenterDistanceSquare(i);
+			if (disSquare <= 0.1) {
 				if (this.selected[i] !== true) {
 					this.loadTile(i, 1);
 				}
@@ -413,7 +413,7 @@ class TiledStreaming {
 		this.x = (180 - lat) / 180;
 		this.y = (lon + 180) / 360;
 	}
-	getCenterDistanceSqure = (id) => {
+	getCenterDistanceSquare = (id) => {
 		let tileX = this.tileCenter[id][0];
 		let tileY = this.tileCenter[id][1];
 		return Math.pow(this.x - tileX, 2) + Math.pow(this.y - tileY, 2);

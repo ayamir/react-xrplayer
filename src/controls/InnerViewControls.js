@@ -7,8 +7,11 @@ import DeviceOrientationControls from './DeviceOrientationControls';
 
 class InnerViewControls {
 
-	constructor(camera) {
+	constructor(camera, scene, renderer) {
 		this.camera = camera;
+		this.scene = scene;
+		this.renderer = renderer;
+
 		this.isConnected = true;
 		this.isUserInteracting = false;     // 标记用户是否正在交互中
 		this.isPointerInteracting = false;  // 鼠标完全控制模式
@@ -55,7 +58,6 @@ class InnerViewControls {
 
 		// 相机位置移动回调
 		this.onCameraPositionUpdate = null;
-		this.initControlsListener();
 	}
 
 	/******************************对外接口************************* */
@@ -187,6 +189,21 @@ class InnerViewControls {
 	};
 
 	initControlsListener = () => {
+		let renderer = this.renderer;
+		for (let i = 0; i < 2; i++) {
+			const controller = renderer.xr.getController(i);
+
+			controller.addEventListener('connected', (event) => {
+				const session = renderer.xr.getSession();
+				if (session !== null) {
+					console.log("session is not null");
+				} else {
+					console.log("session is null");
+				}
+			});
+			this.scene.add(controller);
+		}
+
 		const container = document.getElementById('xr-container')
 
 		container.addEventListener('touchstart', this.onTouchstart, false);
@@ -202,6 +219,7 @@ class InnerViewControls {
 
 	removeControlsListener = () => {
 		const container = document.getElementById('xr-container')
+
 		container.removeEventListener('touchstart', this.onTouchstart, false);
 		container.removeEventListener('touchmove', this.onTouchmove, false);
 		container.removeEventListener('touchend', this.onTouchend, false);
