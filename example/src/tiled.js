@@ -47,7 +47,7 @@ class TiledDemo extends React.Component {
 			}
 			this.tileStreaming.onCameraPositionUpdate(pos.lat, pos.lon);
 		});
-		let textureHelper = this.xrManager.getSenceTextureHelper();
+		let textureHelper = this.xrManager.getSceneTextureHelper();
 		this.tileStreaming = textureHelper.getTextureMediaSource();
 	};
 
