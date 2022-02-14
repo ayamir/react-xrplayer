@@ -88,6 +88,7 @@ class XRPlayerManager {
 		this.initCamera();
 		this.initRenderer();
 		this.initScene();
+		this.initMeshes();
 		this.initController();
 		this.initVR();
 		this.initTextHelper();
@@ -119,15 +120,18 @@ class XRPlayerManager {
 	}
 
 	initScene = () => {
+		this.scene = new THREE.Scene();
+		this.scene.add(this.camera);
+	}
+
+	initMeshes = () => {
 		const {
 			scene_texture_resource: textureResource,
 			axes_helper_display: isAxesHelperDisplay,
 			camera_helper_display: isCameraHelperDisplay
 		} = this.props;
-
 		const {panoramic_type = '360', radius = 500, height = 1000} = textureResource;
 
-		this.scene = new THREE.Scene();
 		this.sceneContainer = document.getElementById('video');
 		this.sceneTextureHelper = new TextureHelper(this.sceneContainer);
 		this.sceneTextureHelper.onCanPlayHandler = (resUrl) => this.handler('scene_res_ready', {resUrl: resUrl});
@@ -145,7 +149,6 @@ class XRPlayerManager {
 		this.sceneMesh = new THREE.Mesh(geometry, material);
 
 		this.scene.add(this.sceneMesh);
-		this.scene.add(this.camera);
 
 		if (isAxesHelperDisplay) {
 			let axisHelper = new THREE.AxesHelper(1000)//每个轴的长度
@@ -237,15 +240,15 @@ class XRPlayerManager {
 
 	/**
 	 * @function
-	 * @name XRPlayerManager#getSenceTextureHelper
+	 * @name XRPlayerManager#getSceneTextureHelper
 	 * @description 获取全景场景的背景纹理控制器，通过其可以控制全景背景的行为
 	 * @returns {TextureHelper} 背景纹理控制器
 	 */
-	getSenceTextureHelper = () => {
+	getSceneTextureHelper = () => {
 		return this.sceneTextureHelper;
 	}
 
-	setSenceResource = (res) => {
+	setSceneResource = (res) => {
 		this.sceneTextureHelper && this.sceneTextureHelper.unloadResource();
 		this.sceneTextureHelper = new TextureHelper(this.sceneContainer);
 		let texture = this.sceneTextureHelper.loadTexture(res);
@@ -254,12 +257,12 @@ class XRPlayerManager {
 	}
 
 	// 背景全景视频播放控制
-	startDisplaySenceResource = () => {
+	startDisplaySceneResource = () => {
 		if (this.sceneTextureHelper) {
 			this.sceneTextureHelper.startDisplay();
 		}
 	}
-	pauseDisplaySenceResource = () => {
+	pauseDisplaySceneResource = () => {
 		if (this.sceneTextureHelper) {
 			this.sceneTextureHelper.pauseDisplay();
 		}
@@ -900,11 +903,16 @@ class XRPlayerManager {
 			let position = new THREE.Vector3();
 			position.copy(intersect.point);
 			position.negate();
-			// this.xrReferenceSpace = this.originReferenceSpace.getOffsetReferenceSpace(
-			// 	new XRRigidTransform({x: position.x, y: position.y, z: position.z})
-			// );
+			const {XRRigidTransform} = window;
+			this.xrReferenceSpace = this.originReferenceSpace.getOffsetReferenceSpace(
+				new XRRigidTransform({x: position.x, y: position.y, z: position.z})
+			);
 			break;
 		}
+	}
+
+	update(timestamp, xrFrame) {
+
 	}
 
 	async toggleVR() {
@@ -956,9 +964,9 @@ class XRPlayerManager {
 			// 创建WebGL层
 			await this.renderer.getContext().makeXRCompatible();
 			this.renderer.domElement.hidden = false;
-			// const { XRWebGLLayer } = window;
-			// let layer = new XRWebGLLayer(this.xrSession, this.renderer.getContext());
-			// this.xrSession.updateRenderState({baseLayer: layer});
+			const {XRWebGLLayer} = window;
+			let layer = new XRWebGLLayer(this.xrSession, this.renderer.getContext());
+			this.xrSession.updateRenderState({baseLayer: layer});
 
 			this.xrSession.requestAnimationFrame((...args) => this.update(...args));
 		} catch (e) {
