@@ -84,7 +84,6 @@ class XRPlayerManager {
 	}
 
 	init = () => {
-		this.checkForXR();
 		this.initCamera();
 		this.initRenderer();
 		this.initScene();
@@ -102,8 +101,10 @@ class XRPlayerManager {
 		} = this.props;
 
 		const camera = new THREE.PerspectiveCamera(
-			camera_fov, this.mount.clientWidth / this.mount.clientHeight,
-			camera_near, camera_far);
+			camera_fov,
+			this.mount.clientWidth / this.mount.clientHeight,
+			camera_near,
+			camera_far);
 		camera.position.set(position.x, position.y, position.z);
 		camera.target = new THREE.Vector3(target.x, target.y, target.z);
 		this.camera = camera;
@@ -854,127 +855,6 @@ class XRPlayerManager {
 		pos.y = distance * Math.cos(phi);
 		pos.z = distance * Math.sin(phi) * Math.sin(theta);
 		return pos;
-	}
-
-	checkForXR = () => {
-		if (navigator.xr === undefined) {
-			console.log("WebXR Device API is not supported in this browser.");
-			return;
-		}
-		console.log(navigator.xr);
-		navigator.xr.isSessionSupported('immersive-vr').then(() => {
-			console.log('VR Immersive is supported.');
-			this.createPresentationButton();
-		})
-	}
-
-	createPresentationButton = () => {
-		this.button = document.createElement('button');
-		this.button.classList.add('vr-toggle');
-		this.button.textContent = "Switch to VR";
-		this.button.addEventListener('click', () => {
-			this.toggleVR();
-		})
-		document.body.appendChild(this.button);
-	}
-
-	onSessionEnded() {
-
-	}
-
-	setupControllerRaycast(raycaster, rayMatrix) {
-		let raycasterOrigin = new THREE.Vector3();
-		let raycasterDestination = new THREE.Vector3(0, 0, -1);
-		raycasterOrigin.setFromMatrixPosition(rayMatrix);
-		raycaster.set(raycasterOrigin, raycasterDestination.transformDirection(rayMatrix).normalize());
-	}
-
-	handleSelect(event) {
-		let rayPose = event.frame.getPose(event.inputSource.targetRaySpace, this.xrReferenceSpace);
-		if (!rayPose) {
-			return;
-		}
-		let pointerMatrix = new THREE.Matrix4();
-		pointerMatrix.fromArray(rayPose.transform.matrix);
-		let raycaster = new THREE.Raycaster();
-		this.setupControllerRaycast(raycaster, pointerMatrix);
-		let intersects = raycaster.intersectObject(this.floor);
-		for (let intersect of intersects) {
-			let position = new THREE.Vector3();
-			position.copy(intersect.point);
-			position.negate();
-			const {XRRigidTransform} = window;
-			this.xrReferenceSpace = this.originReferenceSpace.getOffsetReferenceSpace(
-				new XRRigidTransform({x: position.x, y: position.y, z: position.z})
-			);
-			break;
-		}
-	}
-
-	update(timestamp, xrFrame) {
-
-	}
-
-	async toggleVR() {
-		if (!this.renderer.domElement.hidden && this.xrSession) {
-			return this.deactivateVR();
-		}
-
-		if (this.renderer.domElement.hidden && this.xrSession) {
-			await this.xrSession.end();
-			this.xrSession = null;
-			this.xrReferenceSpace = null;
-		}
-		return this.activateVR();
-	}
-
-	async deactivateVR() {
-		if (!this.xrSession) {
-			return;
-		}
-
-		await this.xrSession.end();
-	}
-
-	async activateVR() {
-		try {
-			this.xrSession = await navigator.xr.requestSession('immersive-vr', {
-				// 3DoF
-				requiredFeatures: ['local-floor'],
-				// 6DoF
-				optionalFeatures: ['bounded-floor']
-			});
-			this.xrSession.addEventListener('end', () => {
-				this.onSessionEnded();
-			})
-
-			const {camera_near, camera_far} = this.props;
-			this.xrSession.depthNear = camera_near;
-			this.xrSession.depthFar = camera_far;
-
-			try {
-				this.xrReferenceSpace = await this.xrSession.requestReferenceSpace('bounded-floor');
-			} catch (e) {
-				this.xrReferenceSpace = await this.xrSession.requestReferenceSpace('local-floor');
-			}
-
-			this.originReferenceSpace = this.xrReferenceSpace;
-			this.xrSession.addEventListener('select', (...args) => this.handleSelect(...args));
-
-			// 创建WebGL层
-			await this.renderer.getContext().makeXRCompatible();
-			this.renderer.domElement.hidden = false;
-			const {XRWebGLLayer} = window;
-			let layer = new XRWebGLLayer(this.xrSession, this.renderer.getContext());
-			this.xrSession.updateRenderState({baseLayer: layer});
-
-			this.xrSession.requestAnimationFrame((...args) => this.update(...args));
-		} catch (e) {
-			console.log("Error while requesting the immersive session: " + e);
-			this.onSessionEnded();
-		}
-
-
 	}
 }
 

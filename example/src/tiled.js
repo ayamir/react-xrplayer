@@ -83,7 +83,7 @@ class TiledDemo extends React.Component {
 		}
 	};
 
-	generateTileTable(rows, cols) {
+	generateTileTable = (rows, cols) => {
 		const tile_name_list = [];
 		const tr_list = [];
 
