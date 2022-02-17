@@ -76,11 +76,10 @@ class XRPlayerManager {
 		this.textHelper = null;
 		this.textBoxes = new Set();
 
+		this.preferredRefSpace = "local";
 		this.xrSession = null;
 		this.originReferenceSpace = null;
 		this.xrReferenceSpace = null;
-
-		this.init();
 	}
 
 	init = () => {
@@ -116,6 +115,8 @@ class XRPlayerManager {
 		renderer.setSize(this.mount.clientWidth, this.mount.clientHeight);
 		renderer.sortObjects = false;
 		renderer.autoClear = false;
+		renderer.xr.enabled = true;
+		renderer.xr.setReferenceSpaceType(this.preferredRefSpace);
 		this.mount.appendChild(renderer.domElement);
 		this.renderer = renderer;
 	}
@@ -182,7 +183,7 @@ class XRPlayerManager {
 		this.embeddedBoxManager = new EmbeddedBoxManager(this);
 	}
 
-	animate = (time) => {
+	update = (timestamp) => {
 		requestAnimationFrame(this.animate);
 		if (this.cameraTweenStatus.num === 0)
 			this.innerViewControls && this.innerViewControls.update();
@@ -195,10 +196,10 @@ class XRPlayerManager {
 		if (this.cameraTweenStatus.paused === false)
 			TWEEN.update(); // 不要轻易去掉，渐变动画依赖该库
 		if (this.vrHelper.vrStatus) {
-			time *= 0.001;
+			timestamp *= 0.001;
 			if (this.spriteShapeHelper) {
 				let objects = this.spriteShapeHelper.getPointObjects();
-				this.vrHelper.updateInteractionObjects(objects, time);
+				this.vrHelper.updateInteractionObjects(objects, timestamp);
 			}
 			this.vrHelper.render(this.scene, this.camera);
 		} else {
@@ -215,6 +216,29 @@ class XRPlayerManager {
 		this.sceneTextureHelper && this.sceneTextureHelper.update();
 		this.textHelper && this.textHelper.update();
 		this.embeddedBoxManager && this.embeddedBoxManager.update();
+	}
+
+	animate = (timestamp, xrFrame) => {
+		if (!this.xrSession) {
+			this.update(timestamp);
+		} else {
+			const inputSources = this.xrSession.inputSources;
+			if (xrFrame) {
+				const pose = xrFrame.getViewerPose(this.xrReferenceSpace);
+				console.log(pose);
+				if (pose) {
+					const xrLayer = this.xrSession.renderState.baseLayer;
+					this.renderer.setFramebuffer(xrLayer.framebuffer);
+				}
+				for (let source of inputSources) {
+					let targetRayPose = xrFrame.getPose(source.targetRaySpace, this.xrReferenceSpace);
+					console.log(targetRayPose);
+				}
+			} else {
+				// console.log("xrFrame is null");
+			}
+			this.update(timestamp);
+		}
 	}
 
 	/*****************************全局接口************************************ */
@@ -855,6 +879,40 @@ class XRPlayerManager {
 		pos.y = distance * Math.cos(phi);
 		pos.z = distance * Math.sin(phi) * Math.sin(theta);
 		return pos;
+	}
+
+	enterImmersiveVR() {
+		this.xrSession = navigator.xr.requestSession("immersive-vr", {
+			requestFeatures: [this.preferredRefSpace],
+		}).then((xrSession) => {
+			this.xrSession = xrSession;
+			console.log(this.xrSession);
+
+			const {camera_far, camera_near} = this.props;
+			this.xrSession.depthNear = camera_near;
+			this.xrSession.depthFar = camera_far;
+
+			xrSession.requestReferenceSpace(this.preferredRefSpace).then((xrReferenceSpace) => {
+				this.xrReferenceSpace = xrReferenceSpace;
+				console.log(this.xrReferenceSpace);
+
+				this.initRenderer();
+				this.initCamera();
+				this.initScene();
+				this.initMeshes();
+				this.initVR();
+				this.initTextHelper();
+
+				requestAnimationFrame((...args) => this.animate(...args));
+
+				this.xrSession.requestAnimationFrame((timestamp, xrFrame) => {
+				})
+			})
+		})
+	}
+
+	onSessionEnded = () => {
+
 	}
 }
 

@@ -38,17 +38,28 @@ class TiledDemo extends React.Component {
 
 	onXRCreated = (manager) => {
 		this.xrManager = manager;
-		this.xrManager.connectCameraControl();
-		this.xrManager.enableKeyControl(true);
-		this.xrManager.onCameraPositionUpdate((pos) => {
-			console.log("lat", pos.lat, "lon", pos.lon);
-			if (this.tileStreaming === null) {
-				return;
-			}
-			this.tileStreaming.onCameraPositionUpdate(pos.lat, pos.lon);
-		});
-		let textureHelper = this.xrManager.getSceneTextureHelper();
-		this.tileStreaming = textureHelper.getTextureMediaSource();
+		if (navigator.xr === undefined) {
+			console.warn("WebXR is not supported in this browser.");
+			this.xrManager.init();
+			this.xrManager.connectCameraControl();
+			this.xrManager.enableKeyControl(true);
+			this.xrManager.onCameraPositionUpdate((pos) => {
+				console.log("lat", pos.lat, "lon", pos.lon);
+				if (this.tileStreaming === null) {
+					return;
+				}
+				this.tileStreaming.onCameraPositionUpdate(pos.lat, pos.lon);
+			});
+			let textureHelper = this.xrManager.getSceneTextureHelper();
+			this.tileStreaming = textureHelper.getTextureMediaSource();
+		} else {
+			navigator.xr.isSessionSupported("immersive-vr").then((isSupported) => {
+				if (isSupported) {
+					console.log("WebXR is supported.");
+					this.xrManager.enterImmersiveVR();
+				}
+			})
+		}
 	};
 
 	updateBufferData = () => {
