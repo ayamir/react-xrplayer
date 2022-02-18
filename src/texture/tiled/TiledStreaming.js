@@ -71,7 +71,7 @@ class TiledStreaming {
 		}
 	}
 
-	initSelectedButton = (rows, cols) => {
+	_initSelectedButton = (rows, cols) => {
 		let ids = [];
 		for (let i = 0; i < rows; i++) {
 			for (let j = 0; j < cols; j++) {
@@ -89,25 +89,25 @@ class TiledStreaming {
 		}
 		let unitWidth = 0.5 / cols;
 		let unitHeight = 0.5 / rows;
-		this.tileCenter = [];
+		this.tileCenters = [];
 		for (let i = 0; i < cols; i++) {
 			for (let j = 0; j < rows; j++) {
 				let x = unitWidth * 2 * i + unitWidth;
 				let y = unitHeight * 2 * j + unitHeight;
 				let point = [x, y];
-				this.tileCenter.push(point);
+				this.tileCenters.push(point);
 			}
 		}
 		for (let i = 0; i < ids.length; i++) {
 			let button = document.getElementById(ids[i]);
 			button.onclick = () => {
-				this.onTileButtonClick(i);
+				this._onTileButtonClick(i);
 			}
 			this.buttons.push(button);
 		}
 	}
 
-	onTileButtonClick = (i) => {
+	_onTileButtonClick = (i) => {
 		let tile_selected_info = document.getElementById('tile_selected_info');
 		let buffer_info = document.getElementById('buffer_info');
 		let level_info = document.getElementById('level_info');
@@ -131,7 +131,7 @@ class TiledStreaming {
 			}
 			level_list.innerHTML = levelList;
 			tile_unselected.onclick = () => {
-				this.unloadTile(i);
+				this._unloadTile(i);
 			}
 			tile_selected.onclick = null;
 			buffer_add.onclick = () => {
@@ -156,7 +156,7 @@ class TiledStreaming {
 			level_list.innerHTML = 'bitrates:null';
 			tile_unselected.onclick = null;
 			tile_selected.onclick = () => {
-				this.loadTile(i, 1);
+				this._loadTile(i, 1);
 			}
 			buffer_add.onclick = null;
 			buffer_diff.onclick = null;
@@ -167,11 +167,11 @@ class TiledStreaming {
 
 	/**
 	 * @function
-	 * @name TiledStreaming#loadTile
+	 * @name TiledStreaming#_loadTile
 	 * @param {number} id , tile分开的编号
 	 * @param {number} level, 加载分块的质量级别
 	 */
-	loadTile = (id, level) => {
+	_loadTile = (id, level) => {
 		// 动态创建视频
 		if (this.enhanceVideos[id] === null) {
 			let video = document.createElement('video');
@@ -179,7 +179,7 @@ class TiledStreaming {
 			video.oncanplay = () => {
 				this.isReady[id] = true;
 			}
-			this.initVideoNode(video, 320, 180);
+			this._initVideoNode(video, 320, 180);
 			this.enhanceVideos[id] = video;
 			video.load();
 			// TODO 测试，底层使用播放情况
@@ -216,10 +216,10 @@ class TiledStreaming {
 
 	/**
 	 * @function
-	 * @name TiledStreaming#unloadTile
+	 * @name TiledStreaming#_unloadTile
 	 * @param {number} id, 写在分块的编号
 	 */
-	unloadTile = (id) => {
+	_unloadTile = (id) => {
 		let videoNode = this.enhanceVideos[id];
 		videoNode.pause();
 		let dash = this.enhanceDash[id];
@@ -230,7 +230,7 @@ class TiledStreaming {
 		this.selected[id] = false;
 	}
 
-	createEnhanceLay = (num) => {
+	_createEnhanceLay = (num) => {
 		for (let i = 0; i < num; i++) {
 			this.enhanceVideos.push(null);
 			this.enhanceDash.push(null);
@@ -256,19 +256,19 @@ class TiledStreaming {
 		this.timingAsynSrc = new TIMINGSRC.TimingObject({
 			position: this.baseVideo.currentTime,
 		});
-		this.initCanvas();
-		this.createEnhanceLay(rows * cols);
-		this.initSelectedButton(rows, cols);
-		return this.getTextureFromVideo();
+		this._initCanvas();
+		this._createEnhanceLay(rows * cols);
+		this._initSelectedButton(rows, cols);
+		return this._getTextureFromVideo();
 	}
 
-	getTextureFromVideo = () => {
+	_getTextureFromVideo = () => {
 		this.texture = new THREE.CanvasTexture(this.canvas);
 		this.texture.needsUpdate = true;
 		return this.texture;
 	}
 
-	initVideoNode = (videoInstance, width, height) => {
+	_initVideoNode = (videoInstance, width, height) => {
 		videoInstance.width = width;
 		videoInstance.height = height;
 		videoInstance.loop = true;
@@ -287,10 +287,10 @@ class TiledStreaming {
 		videoInstance.setAttribute('x5-video-orientation', 'portrait')
 		videoInstance.setAttribute('style', 'object-fit: fill')
 		videoInstance.setAttribute('loop', "loop")
-		videoInstance.addEventListener('canplay', this.onVideoStarted, false);
+		videoInstance.addEventListener('canplay', this._onVideoStarted, false);
 	}
 
-	onVideoStarted = () => {
+	_onVideoStarted = () => {
 		if (this.timingAsynSrc) {
 			this.timingAsynSrc.update({
 				position: this.baseVideo.currentTime,
@@ -299,7 +299,7 @@ class TiledStreaming {
 		}
 	}
 
-	initCanvas = () => {
+	_initCanvas = () => {
 		this.canvas = document.createElement('canvas');
 		this.canvas.width = 2048;
 		this.canvas.height = 1024;
@@ -313,7 +313,7 @@ class TiledStreaming {
 		this.ctx.imageSmoothingQuality = "high";
 	}
 
-	updateCanvas = () => {
+	_updateCanvas = () => {
 		if (!this.ctx) {
 			return;
 		}
@@ -334,7 +334,7 @@ class TiledStreaming {
 	}
 
 	update = () => {
-		this.updateCanvas();
+		this._updateCanvas();
 		if (this.texture) {
 			this.texture.needsUpdate = true;
 		}
@@ -353,52 +353,61 @@ class TiledStreaming {
 
 	/**
 	 * @function
-	 * @name TiledStreaming#
-	 * @description
+	 * @name TiledStreaming#onCameraPositionUpdate
+	 * @description invoke when camera place changes
 	 */
 	onCameraPositionUpdate = (lat, lon) => {
-		this.updateCameraPosXY(lat, lon);
+		// update camera place parameter: x, y
+		this._updateCameraPosXY(lat, lon);
 		if (this.detectCounter < 5) {
 			this.detectCounter++;
 			this.traceT.push(this.detectCounter);
 			this.traceX.push(this.x);
 			this.traceY.push(this.y);
+			// avoid array over bound
 			if (this.detectCounter >= this.predictX.length) {
 				return;
 			}
+			// calculate errorX errorY
 			this.errorX += Math.abs(this.x - this.predictX[this.detectCounter]);
 			this.errorY += Math.abs(this.y - this.predictY[this.detectCounter]);
 			this.errorCount++;
 			return;
 		} else {
 			this.detectCounter = 0;
-			// 执行线性回归预测
+			// output cumulated MAE
 			console.log('X的预测MAE=', this.errorX / this.errorCount);
 			console.log('Y的预测MAE=', this.errorY / this.errorCount);
 
 			const regressionX = new SimpleLinearRegression(this.traceT, this.traceX);
 			const regressionY = new SimpleLinearRegression(this.traceT, this.traceY);
+
 			this.px = this.predictX[this.predictX.length - 1];
 			this.py = this.predictY[this.predictX.length - 1];
+
 			this.predictX = [];
 			this.predictY = [];
+
 			for (let i = 5; i < 10; i++) {
 				this.predictX.push(regressionX.predict(i));
 				this.predictY.push(regressionY.predict(i));
 			}
+
 			this.traceT = [];
 			this.traceX = [];
 			this.traceY = [];
 		}
-		for (let i = 0; i < this.tileCenter.length; i++) {
-			let disSquare = this.getCenterDistanceSquare(i);
-			if (disSquare <= 0.1) {
+		// iterate all tiles and decide load or unload
+		// according to distance with camera center
+		for (let i = 0; i < this.tileCenters.length; i++) {
+			let distance = this._getCenterDistanceSquare(i);
+			if (distance <= 0.1) {
 				if (this.selected[i] !== true) {
-					this.loadTile(i, 1);
+					this._loadTile(i, 1);
 				}
 			} else {
 				if (this.selected[i] === true) {
-					this.unloadTile(i);
+					this._unloadTile(i);
 				}
 			}
 		}
@@ -409,13 +418,15 @@ class TiledStreaming {
 		// 与以选择块的质量差
 		this._updateChart();
 	}
-	updateCameraPosXY = (lat, lon) => {
+
+	_updateCameraPosXY = (lat, lon) => {
 		this.x = (180 - lat) / 180;
 		this.y = (lon + 180) / 360;
 	}
-	getCenterDistanceSquare = (id) => {
-		let tileX = this.tileCenter[id][0];
-		let tileY = this.tileCenter[id][1];
+
+	_getCenterDistanceSquare = (id) => {
+		let tileX = this.tileCenters[id][0];
+		let tileY = this.tileCenters[id][1];
 		return Math.pow(this.x - tileX, 2) + Math.pow(this.y - tileY, 2);
 	}
 
