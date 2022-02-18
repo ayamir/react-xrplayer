@@ -57,6 +57,7 @@ class TiledDemo extends React.Component {
 		if (navigator.xr === undefined) {
 			console.warn("WebXR is not supported in this browser.");
 			this.xrManager.init();
+			this.afterInit();
 		} else {
 			navigator.xr.isSessionSupported("immersive-vr").then((isSupported) => {
 				if (isSupported) {
