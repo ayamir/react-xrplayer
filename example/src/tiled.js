@@ -36,11 +36,8 @@ class TiledDemo extends React.Component {
 		this.bufferChart = null;
 	}
 
-	onXRCreated = (manager) => {
-		this.xrManager = manager;
-		if (navigator.xr === undefined) {
-			console.warn("WebXR is not supported in this browser.");
-			this.xrManager.init();
+	afterInit = () => {
+		if (this.xrManager) {
 			this.xrManager.connectCameraControl();
 			this.xrManager.enableKeyControl(true);
 			this.xrManager.onCameraPositionUpdate((pos) => {
@@ -52,11 +49,21 @@ class TiledDemo extends React.Component {
 			});
 			let textureHelper = this.xrManager.getSceneTextureHelper();
 			this.tileStreaming = textureHelper.getTextureMediaSource();
+		}
+	}
+
+	onXRCreated = (manager) => {
+		this.xrManager = manager;
+		if (navigator.xr === undefined) {
+			console.warn("WebXR is not supported in this browser.");
+			this.xrManager.init();
 		} else {
 			navigator.xr.isSessionSupported("immersive-vr").then((isSupported) => {
 				if (isSupported) {
 					console.log("WebXR is supported.");
-					this.xrManager.enterImmersiveVR();
+					this.xrManager.enterImmersiveVR().then(() => {
+						this.afterInit();
+					});
 				}
 			})
 		}

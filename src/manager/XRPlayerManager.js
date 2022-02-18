@@ -79,7 +79,7 @@ class XRPlayerManager {
 		this.preferredRefSpace = "local";
 		this.xrSession = null;
 		this.originReferenceSpace = null;
-		this.xrReferenceSpace = null;
+		this.xrRefSpace = null;
 	}
 
 	init = () => {
@@ -223,19 +223,8 @@ class XRPlayerManager {
 			this.update(timestamp);
 		} else {
 			const inputSources = this.xrSession.inputSources;
-			if (xrFrame) {
-				const pose = xrFrame.getViewerPose(this.xrReferenceSpace);
-				console.log(pose);
-				if (pose) {
-					const xrLayer = this.xrSession.renderState.baseLayer;
-					this.renderer.setFramebuffer(xrLayer.framebuffer);
-				}
-				for (let source of inputSources) {
-					let targetRayPose = xrFrame.getPose(source.targetRaySpace, this.xrReferenceSpace);
-					console.log(targetRayPose);
-				}
-			} else {
-				// console.log("xrFrame is null");
+			for (let source of inputSources) {
+				console.log(source.targetRayMode);
 			}
 			this.update(timestamp);
 		}
@@ -881,38 +870,46 @@ class XRPlayerManager {
 		return pos;
 	}
 
-	enterImmersiveVR() {
-		this.xrSession = navigator.xr.requestSession("immersive-vr", {
+	async enterImmersiveVR() {
+		this.xrSession = await navigator.xr.requestSession("immersive-vr", {
 			requestFeatures: [this.preferredRefSpace],
-		}).then((xrSession) => {
-			this.xrSession = xrSession;
-			console.log(this.xrSession);
-
-			const {camera_far, camera_near} = this.props;
-			this.xrSession.depthNear = camera_near;
-			this.xrSession.depthFar = camera_far;
-
-			xrSession.requestReferenceSpace(this.preferredRefSpace).then((xrReferenceSpace) => {
-				this.xrReferenceSpace = xrReferenceSpace;
-				console.log(this.xrReferenceSpace);
-
-				this.initRenderer();
-				this.initCamera();
-				this.initScene();
-				this.initMeshes();
-				this.initVR();
-				this.initTextHelper();
-
-				requestAnimationFrame((...args) => this.animate(...args));
-
-				this.xrSession.requestAnimationFrame((timestamp, xrFrame) => {
-				})
-			})
 		})
+		console.log(this.xrSession);
+
+		const {camera_far, camera_near} = this.props;
+		this.xrSession.depthNear = camera_near;
+		this.xrSession.depthFar = camera_far;
+
+		this.xrRefSpace = await this.xrSession.requestReferenceSpace(this.preferredRefSpace)
+		console.log(this.xrRefSpace);
+
+		this.initRenderer();
+		this.initCamera();
+		this.initScene();
+		this.initMeshes();
+		this.initController();
+		this.initVR();
+		this.initTextHelper();
+
+		this.renderer.getContext().makeXRCompatible().then(() => {
+			this.renderer.domElement.hidden = false;
+		});
+
+		this.xrSession.addEventListener("end", this.onXRSessionEnded);
+		this.xrSession.addEventListener("selectstart", (event) => {
+			let targetRayPose = event.frame.getPose(event.inputSource.targetRaySpace, this.xrRefSpace);
+			console.log(targetRayPose);
+		});
+
+		window.requestAnimationFrame(this.onWindowAnimationFrame);
 	}
 
-	onSessionEnded = () => {
+	onWindowAnimationFrame = (timestamp, xrFrame) => {
+		this.animate(timestamp, xrFrame);
+	}
 
+	onXRSessionEnded = () => {
+		this.xrSession = null;
 	}
 }
 
