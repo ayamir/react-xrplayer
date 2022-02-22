@@ -113,15 +113,13 @@ class TiledDemo extends React.Component {
 			}
 		}
 
-		let cnt = 0;
 		for (let i = 0; i < cols; i++) {
 			const btn_list = [];
 			for (let j = 0; j < rows; j++) {
-				let index = i * cols + j + cnt;
+				let index = i * rows + j;
 				let id = tile_name_list[index];
 				btn_list.push(<button key={id.toString()} id={id}>{id}</button>)
 			}
-			cnt++;
 			const tr = React.createElement("tr", {key: i}, btn_list);
 			tr_list.push(tr);
 		}
@@ -156,7 +154,7 @@ class TiledDemo extends React.Component {
 						onEventHandler={this.onEventHandler}
 					/>
 				) : (
-					<div>加载中</div>
+					<div>loading</div>
 				)}
 				{this.state.isDataReady ? (
 					<div
@@ -265,16 +263,16 @@ class TiledDemo extends React.Component {
 				</div>
 				<div style={{position: "fixed", top: "0"}}>
 					<button onClick={() => this.setState({operation_state: "tile"})}>
-						分块
+						tiles
 					</button>
 					<button onClick={() => this.setState({operation_state: "chart"})}>
-						图标
+						chart
 					</button>
 					<button onClick={() => this.setState({operation_state: "none"})}>
-						关闭
+						close
 					</button>
 					<button onClick={() => this.setState({isFullScreen: true})} >
-						全屏
+						fullscreen
 					</button>
 				</div>
 			</div>
