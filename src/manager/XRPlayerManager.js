@@ -17,6 +17,7 @@ import EmbeddedImageBox from "../display/ResourceBox/EmbeddedResource/EmbeddedIm
 import EmbeddedVideoBox from "../display/ResourceBox/EmbeddedResource/EmbeddedVideoBox";
 
 // eslint-disable-next-line no-unused-vars
+import regeneratorRuntime from "regenerator-runtime";
 
 /**
  * @class
