@@ -7,10 +7,9 @@ import DeviceOrientationControls from './DeviceOrientationControls';
 
 class InnerViewControls {
 
-	constructor(camera, scene, renderer) {
+	constructor(camera, scene) {
 		this.camera = camera;
 		this.scene = scene;
-		this.renderer = renderer;
 
 		this.isConnected = true;
 		this.isUserInteracting = false;     // 标记用户是否正在交互中
@@ -189,22 +188,9 @@ class InnerViewControls {
 	};
 
 	initControlsListener = () => {
-		let renderer = this.renderer;
-		for (let i = 0; i < 2; i++) {
-			const controller = renderer.xr.getController(i);
-
-			controller.addEventListener('connected', (event) => {
-				const session = renderer.xr.getSession();
-				if (session !== null) {
-					console.log("session is not null");
-				} else {
-					console.log("session is null");
-				}
-			});
-			this.scene.add(controller);
-		}
-
 		const container = document.getElementById('xr-container')
+
+		container.addEventListener('pointermove', this.onPointerMove, false);
 
 		container.addEventListener('touchstart', this.onTouchstart, false);
 		container.addEventListener('touchmove', this.onTouchmove, false);
@@ -219,6 +205,8 @@ class InnerViewControls {
 
 	removeControlsListener = () => {
 		const container = document.getElementById('xr-container')
+
+		container.removeEventListener('pointermove', this.onPointerMove, false);
 
 		container.removeEventListener('touchstart', this.onTouchstart, false);
 		container.removeEventListener('touchmove', this.onTouchmove, false);
@@ -349,6 +337,12 @@ class InnerViewControls {
 			// 用于立体场景音效
 			// mouseActionLocal([lon, lat]);
 		}
+	}
+
+	onPointerMove = (event) => {
+		this.lon = event.movementX * 0.1 + this.lon;
+		this.lat = this.lat - event.movementY * 0.1;
+		this.updateCameraPosition();
 	}
 
 	onDocumentMouseUp = (event) => {
