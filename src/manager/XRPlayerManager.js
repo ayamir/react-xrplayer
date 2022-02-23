@@ -83,6 +83,8 @@ class XRPlayerManager {
 		this.xrSession = null;
 		this.originReferenceSpace = null;
 		this.xrRefSpace = null;
+
+		this.vector = null;
 	}
 
 	init = () => {
@@ -93,7 +95,7 @@ class XRPlayerManager {
 		this.initController();
 		this.initVR();
 		this.initTextHelper();
-		this.animate(0);
+		this.update(0);
 	}
 
 	initCamera = () => {
@@ -187,7 +189,7 @@ class XRPlayerManager {
 	}
 
 	update = (timestamp) => {
-		requestAnimationFrame(this.animate);
+		requestAnimationFrame(this.update);
 		if (this.cameraTweenStatus.num === 0)
 			this.innerViewControls && this.innerViewControls.update();
 		if (this.centerModelHelper) {
@@ -219,20 +221,6 @@ class XRPlayerManager {
 		this.sceneTextureHelper && this.sceneTextureHelper.update();
 		this.textHelper && this.textHelper.update();
 		this.embeddedBoxManager && this.embeddedBoxManager.update();
-	}
-
-	animate = (timestamp, xrFrame) => {
-		if (!this.xrSession) {
-			this.update(timestamp);
-		} else {
-			if (xrFrame) {
-				const inputSources = this.xrSession.inputSources;
-				for (let source of inputSources) {
-					console.log(source.targetRayMode);
-				}
-			}
-			this.update(timestamp);
-		}
 	}
 
 	/*****************************全局接口************************************ */
@@ -873,54 +861,6 @@ class XRPlayerManager {
 		pos.y = distance * Math.cos(phi);
 		pos.z = distance * Math.sin(phi) * Math.sin(theta);
 		return pos;
-	}
-
-	async enterImmersiveVR() {
-		this.xrSession = await navigator.xr.requestSession("immersive-vr", {
-			requestFeatures: [this.preferredRefSpace],
-		})
-		console.log(this.xrSession);
-
-		const {camera_far, camera_near} = this.props;
-		this.xrSession.depthNear = camera_near;
-		this.xrSession.depthFar = camera_far;
-
-		this.xrRefSpace = await this.xrSession.requestReferenceSpace(this.preferredRefSpace)
-		console.log(this.xrRefSpace);
-
-		this.initRenderer();
-		this.initCamera();
-		this.initScene();
-		this.initMeshes();
-		this.initController();
-		this.initVR();
-		this.initTextHelper();
-
-		await this.renderer.getContext().makeXRCompatible();
-		this.renderer.domElement.hidden = false;
-		console.log(this.renderer.getContext());
-		console.log(this.renderer.info);
-
-		// const { XRWebGLLayer } = window;
-		// const layer = new XRWebGLLayer(this.xrSession, this.renderer.getContext());
-		// this.xrSession.updateRenderState({baseLayer: layer});
-		// console.log(this.renderer.xr.getSession());
-
-		this.xrSession.addEventListener("end", this.onXRSessionEnded);
-		this.xrSession.addEventListener("selectstart", (event) => {
-			let targetRayPose = event.frame.getPose(event.inputSource.targetRaySpace, this.xrRefSpace);
-			console.log(targetRayPose);
-		});
-
-		window.requestAnimationFrame(this.onWindowAnimationFrame);
-	}
-
-	onWindowAnimationFrame = (timestamp, xrFrame) => {
-		this.animate(timestamp, xrFrame);
-	}
-
-	onXRSessionEnded = () => {
-		this.xrSession = null;
 	}
 }
 

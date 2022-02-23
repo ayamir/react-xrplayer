@@ -376,8 +376,8 @@ class TiledStreaming {
 		} else {
 			this.detectCounter = 0;
 			// output cumulated MAE
-			console.log('X的预测MAE=', this.errorX / this.errorCount);
-			console.log('Y的预测MAE=', this.errorY / this.errorCount);
+			// console.log('X的预测MAE=', this.errorX / this.errorCount);
+			// console.log('Y的预测MAE=', this.errorY / this.errorCount);
 
 			const regressionX = new SimpleLinearRegression(this.traceT, this.traceX);
 			const regressionY = new SimpleLinearRegression(this.traceT, this.traceY);
