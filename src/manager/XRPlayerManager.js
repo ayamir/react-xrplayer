@@ -16,6 +16,8 @@ import EmbeddedTextBox from "../display/ResourceBox/EmbeddedResource/EmbeddedTex
 import EmbeddedImageBox from "../display/ResourceBox/EmbeddedResource/EmbeddedImageBox";
 import EmbeddedVideoBox from "../display/ResourceBox/EmbeddedResource/EmbeddedVideoBox";
 
+// eslint-disable-next-line no-unused-vars
+
 /**
  * @class
  * @name XRPlayerManager
@@ -163,7 +165,7 @@ class XRPlayerManager {
 	}
 
 	initController = () => {
-		this.innerViewControls = new InnerViewControls(this.camera, this.scene, this.renderer);
+		this.innerViewControls = new InnerViewControls(this.camera, this.scene);
 	}
 
 	initVR = () => {
@@ -222,9 +224,11 @@ class XRPlayerManager {
 		if (!this.xrSession) {
 			this.update(timestamp);
 		} else {
-			const inputSources = this.xrSession.inputSources;
-			for (let source of inputSources) {
-				console.log(source.targetRayMode);
+			if (xrFrame) {
+				const inputSources = this.xrSession.inputSources;
+				for (let source of inputSources) {
+					console.log(source.targetRayMode);
+				}
 			}
 			this.update(timestamp);
 		}
@@ -891,9 +895,15 @@ class XRPlayerManager {
 		this.initVR();
 		this.initTextHelper();
 
-		this.renderer.getContext().makeXRCompatible().then(() => {
-			this.renderer.domElement.hidden = false;
-		});
+		await this.renderer.getContext().makeXRCompatible();
+		this.renderer.domElement.hidden = false;
+		console.log(this.renderer.getContext());
+		console.log(this.renderer.info);
+
+		// const { XRWebGLLayer } = window;
+		// const layer = new XRWebGLLayer(this.xrSession, this.renderer.getContext());
+		// this.xrSession.updateRenderState({baseLayer: layer});
+		// console.log(this.renderer.xr.getSession());
 
 		this.xrSession.addEventListener("end", this.onXRSessionEnded);
 		this.xrSession.addEventListener("selectstart", (event) => {
