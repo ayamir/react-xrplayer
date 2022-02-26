@@ -27,6 +27,7 @@ class InnerViewControls {
 		this.onPointerDownPointerY = 0;
 		this.onPointerDownLon = 0;
 		this.onPointerDownLat = 0;
+		this.moveFactor = 0.5;
 
 		// 视野自动旋转
 		this.enableAutoRotate = false;          // 是否自动旋转
@@ -327,12 +328,12 @@ class InnerViewControls {
 	onDocumentMouseMove = (event) => {
 		if (this.isUserInteracting === true) {
 			if (this.isPointerInteracting) {
-				this.lon = event.movementX * 0.1 + this.lon;
-				this.lat = event.movementY * 0.1 + this.lat;
+				this.lon = event.movementX * this.moveFactor + this.lon;
+				this.lat = event.movementY * this.moveFactor + this.lat;
 			} else {
 				// 在鼠标Down位置叠加偏移量
-				this.lon = (this.onPointerDownPointerX - event.clientX) * 0.1 + this.onPointerDownLon;
-				this.lat = -(this.onPointerDownPointerY - event.clientY) * 0.1 + this.onPointerDownLat;
+				this.lon = (this.onPointerDownPointerX - event.clientX) * this.moveFactor + this.onPointerDownLon;
+				this.lat = -(this.onPointerDownPointerY - event.clientY) * this.moveFactor + this.onPointerDownLat;
 			}
 			// 用于立体场景音效
 			// mouseActionLocal([lon, lat]);
@@ -340,8 +341,8 @@ class InnerViewControls {
 	}
 
 	onPointerMove = (event) => {
-		this.lon = event.movementX * 0.1 + this.lon;
-		this.lat = this.lat - event.movementY * 0.1;
+		this.lon = event.movementX * this.moveFactor + this.lon;
+		this.lat = this.lat - event.movementY * this.moveFactor;
 		this.updateCameraPosition();
 	}
 
