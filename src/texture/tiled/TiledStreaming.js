@@ -2,7 +2,6 @@ import {MediaPlayer} from 'dashjs';
 import * as THREE from 'three';
 import TIMINGSRC from 'TIMINGSRC';
 import MCorp from 'MCorp';
-import SimpleLinearRegression from 'ml-regression-simple-linear';
 import CameraChart from './charts/CameraChart';
 
 /**
@@ -40,8 +39,7 @@ class TiledStreaming {
 		this.traceX = [];
 		this.traceY = [];
 		this.traceT = [];
-		this.predictX = [];
-		this.predictY = [];
+		this.predictPoints = [];
 		this.px = 0;
 		this.py = 0;
 		this.errorX = 0;
@@ -356,51 +354,16 @@ class TiledStreaming {
 	 * @name TiledStreaming#onCameraPositionUpdate
 	 * @description invoke when camera place changes
 	 */
-	onCameraPositionUpdate = (lat, lon) => {
+	onCameraPositionUpdate = (lat, lon, predictPoints, isPredicted) => {
 		// update camera place parameter: x, y
 		this._updateCameraPosXY(lat, lon);
-		if (this.detectCounter < 5) {
-			this.detectCounter++;
-			this.traceT.push(this.detectCounter);
-			this.traceX.push(this.x);
-			this.traceY.push(this.y);
-			// avoid array over bound
-			if (this.detectCounter >= this.predictX.length) {
-				return;
-			}
-			// calculate errorX errorY
-			this.errorX += Math.abs(this.x - this.predictX[this.detectCounter]);
-			this.errorY += Math.abs(this.y - this.predictY[this.detectCounter]);
-			this.errorCount++;
-			return;
-		} else {
-			this.detectCounter = 0;
-			// output cumulated MAE
-			// console.log('X的预测MAE=', this.errorX / this.errorCount);
-			// console.log('Y的预测MAE=', this.errorY / this.errorCount);
 
-			const regressionX = new SimpleLinearRegression(this.traceT, this.traceX);
-			const regressionY = new SimpleLinearRegression(this.traceT, this.traceY);
+		this.predictPoints = predictPoints;
 
-			this.px = this.predictX[this.predictX.length - 1];
-			this.py = this.predictY[this.predictX.length - 1];
-
-			this.predictX = [];
-			this.predictY = [];
-
-			for (let i = 5; i < 10; i++) {
-				this.predictX.push(regressionX.predict(i));
-				this.predictY.push(regressionY.predict(i));
-			}
-
-			this.traceT = [];
-			this.traceX = [];
-			this.traceY = [];
-		}
 		// iterate all tiles and decide load or unload
 		// according to distance with camera center
 		for (let i = 0; i < this.tileCenters.length; i++) {
-			let distance = this._getCenterDistanceSquare(i);
+			let distance = this._getCenterDistanceSquare(i, isPredicted);
 			if (distance <= 0.1) {
 				if (this.selected[i] !== true) {
 					this._loadTile(i, 1);
@@ -424,10 +387,15 @@ class TiledStreaming {
 		this.y = (lon + 180) / 360;
 	}
 
-	_getCenterDistanceSquare = (id) => {
+	_getCenterDistanceSquare = (id, isPredicted) => {
 		let tileX = this.tileCenters[id][0];
 		let tileY = this.tileCenters[id][1];
-		return Math.pow(this.x - tileX, 2) + Math.pow(this.y - tileY, 2);
+		if (!isPredicted) {
+			return Math.pow(this.x - tileX, 2) + Math.pow(this.y - tileY, 2);
+		} else {
+			// TODO
+			return null;
+		}
 	}
 
 	/**

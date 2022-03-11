@@ -58,6 +58,9 @@ class InnerViewControls {
 
 		// 相机位置移动回调
 		this.onCameraPositionUpdate = null;
+
+		this.isPredicted = false;
+		this.predictPoints = null;
 	}
 
 	/******************************对外接口************************* */
@@ -144,6 +147,13 @@ class InnerViewControls {
 		this.initSphericalData();
 	}
 
+	setPredict = (predictPoints) => {
+		this.predictPoints = predictPoints;
+		if (predictPoints !== null) {
+			this.isPredicted = true;
+		}
+	}
+
 	// 相机FOV接口
 	getCameraFov = () => {
 		return this.camera.fov;
@@ -191,7 +201,7 @@ class InnerViewControls {
 	initControlsListener = () => {
 		const container = document.getElementById('xr-container')
 
-		container.addEventListener('pointermove', this.onPointerMove, false);
+		// container.addEventListener('pointermove', this.onPointerMove, false);
 
 		container.addEventListener('touchstart', this.onTouchstart, false);
 		container.addEventListener('touchmove', this.onTouchmove, false);
@@ -207,7 +217,7 @@ class InnerViewControls {
 	removeControlsListener = () => {
 		const container = document.getElementById('xr-container')
 
-		container.removeEventListener('pointermove', this.onPointerMove, false);
+		// container.removeEventListener('pointermove', this.onPointerMove, false);
 
 		container.removeEventListener('touchstart', this.onTouchstart, false);
 		container.removeEventListener('touchmove', this.onTouchmove, false);
@@ -271,15 +281,20 @@ class InnerViewControls {
 		} else if (this.lon < -180) {
 			this.lon = 360 + this.lon;
 		}
-		this.onCameraPositionUpdate && this.onCameraPositionUpdate({
-			lat: this.lat, lon: this.lon
-		});
+		this.onCameraPositionUpdate && this.onCameraPositionUpdate(
+			{
+				lat: this.lat, lon: this.lon
+			},
+			this.predictPoints,
+			this.isPredicted,
+		);
 		this.phi = THREE.Math.degToRad(this.lat);
 		this.theta = THREE.Math.degToRad(this.lon);
 		// 球坐标系与直角坐标系的转换
 		this.camera.position.x = this.distance * Math.sin(this.phi) * Math.cos(this.theta);
 		this.camera.position.y = this.distance * Math.cos(this.phi);
 		this.camera.position.z = this.distance * Math.sin(this.phi) * Math.sin(this.theta);
+		// console.log("camera.x=" + this.camera.position.x + ", camera.y=" + this.camera.position.y);
 	}
 
 	autoRotate = () => {

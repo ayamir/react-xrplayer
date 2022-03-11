@@ -40,12 +40,12 @@ class TiledDemo extends React.Component {
 		if (this.xrManager) {
 			this.xrManager.connectCameraControl();
 			this.xrManager.enableKeyControl(true);
-			this.xrManager.onCameraPositionUpdate((pos) => {
+			this.xrManager.onCameraPositionUpdate((pos, predictPoints, isPredicted) => {
 				// console.log("lat", pos.lat, "lon", pos.lon);
 				if (this.tileStreaming === null) {
 					return;
 				}
-				this.tileStreaming.onCameraPositionUpdate(pos.lat, pos.lon);
+				this.tileStreaming.onCameraPositionUpdate(pos.lat, pos.lon, predictPoints, isPredicted);
 			});
 			let textureHelper = this.xrManager.getSceneTextureHelper();
 			this.tileStreaming = textureHelper.getTextureMediaSource();

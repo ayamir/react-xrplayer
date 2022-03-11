@@ -18,6 +18,7 @@ import EmbeddedVideoBox from "../display/ResourceBox/EmbeddedResource/EmbeddedVi
 
 // eslint-disable-next-line no-unused-vars
 import regeneratorRuntime from "regenerator-runtime";
+import {normalize} from "@testing-library/jest-dom/dist/utils";
 
 /**
  * @class
@@ -79,12 +80,9 @@ class XRPlayerManager {
 		this.textHelper = null;
 		this.textBoxes = new Set();
 
-		this.preferredRefSpace = "local";
-		this.xrSession = null;
-		this.originReferenceSpace = null;
-		this.xrRefSpace = null;
-
-		this.vector = null;
+		this.sampleTimes = 0;
+		this.points = [];
+		this.predictPoints = null;
 	}
 
 	init = () => {
@@ -111,6 +109,9 @@ class XRPlayerManager {
 			camera_far);
 		camera.position.set(position.x, position.y, position.z);
 		camera.target = new THREE.Vector3(target.x, target.y, target.z);
+		camera.position.x = 10;
+		camera.position.y = 0;
+		camera.position.z = 0;
 		this.camera = camera;
 	}
 
@@ -120,8 +121,6 @@ class XRPlayerManager {
 		renderer.setSize(this.mount.clientWidth, this.mount.clientHeight);
 		renderer.sortObjects = false;
 		renderer.autoClear = false;
-		renderer.xr.enabled = true;
-		renderer.xr.setReferenceSpaceType(this.preferredRefSpace);
 		this.mount.appendChild(renderer.domElement);
 		this.renderer = renderer;
 	}
@@ -188,8 +187,52 @@ class XRPlayerManager {
 		this.embeddedBoxManager = new EmbeddedBoxManager(this);
 	}
 
+	sendData = async () => {
+		// communicate with server
+		const response = await fetch("http://10.112.79.143:5000/predict", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(this.points)
+		})
+		if (response.ok) {
+			console.log(response.body);
+			// pass values to innerController
+			if (this.innerViewControls) {
+				this.innerViewControls.setPredict(this.predictPoints);
+			}
+		}
+		// clear arrays
+		this.sampleTimes = 0;
+		this.points = [];
+	}
+
+	normalizeX = (x) => {
+		x = x / 10;
+		return ((Math.asin(x) / Math.PI + 1) / 2);
+	}
+
+	normalizeY = (y) => {
+		y = y / 10;
+		return ((y * (-1) + 1) / 2);
+	}
+
 	update = (timestamp) => {
 		requestAnimationFrame(this.update);
+		this.sampleTimes++;
+		// sample every 4 times
+		if (this.sampleTimes % 4 === 0) {
+			// normalize x and y
+			let x = this.normalizeX(this.camera.position.x);
+			let y = this.normalizeY(this.camera.position.y);
+			this.points.push(x);
+			this.points.push(y);
+			if (this.sampleTimes === 60) {
+				// Send data to server
+				this.sendData();
+			}
+		}
 		if (this.cameraTweenStatus.num === 0)
 			this.innerViewControls && this.innerViewControls.update();
 		if (this.centerModelHelper) {
