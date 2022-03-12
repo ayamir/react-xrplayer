@@ -18,7 +18,6 @@ import EmbeddedVideoBox from "../display/ResourceBox/EmbeddedResource/EmbeddedVi
 
 // eslint-disable-next-line no-unused-vars
 import regeneratorRuntime from "regenerator-runtime";
-import {normalize} from "@testing-library/jest-dom/dist/utils";
 
 /**
  * @class
@@ -187,22 +186,28 @@ class XRPlayerManager {
 		this.embeddedBoxManager = new EmbeddedBoxManager(this);
 	}
 
-	sendData = async () => {
-		// communicate with server
-		const response = await fetch("http://10.112.79.143:5000/predict", {
+	postData = async () => {
+		let predictUrl = "https://10.112.79.143:5000/predict";
+		const response = await fetch(predictUrl, {
 			method: "POST",
+			mode: "cors",
 			headers: {
 				"Content-Type": "application/json"
 			},
 			body: JSON.stringify(this.points)
-		})
-		if (response.ok) {
-			console.log(response.body);
+		});
+		return response.json();
+	}
+
+	sendData = () => {
+		// communicate with server
+		this.postData().then(data => {
+			this.predictPoints = data[0];
 			// pass values to innerController
 			if (this.innerViewControls) {
 				this.innerViewControls.setPredict(this.predictPoints);
 			}
-		}
+		});
 		// clear arrays
 		this.sampleTimes = 0;
 		this.points = [];

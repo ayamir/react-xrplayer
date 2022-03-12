@@ -32,7 +32,6 @@ class TiledStreaming {
 
 		this.detectCounter = 0;
 
-
 		this.trace = [];
 		this.cameraChart = null;
 		this.time = 0;
@@ -393,8 +392,12 @@ class TiledStreaming {
 		if (!isPredicted) {
 			return Math.pow(this.x - tileX, 2) + Math.pow(this.y - tileY, 2);
 		} else {
-			// TODO
-			return null;
+			this.px = this.predictPoints[0][0];
+			this.py = this.predictPoints[0][1];
+			this.errorX = Math.abs(this.x - this.px);
+			this.errorY = Math.abs(this.y - this.py);
+			console.log("MAE.x = " + this.errorX + ", MAE.y = " + this.errorY);
+			return Math.pow(this.px - tileX, 2) + Math.pow(this.py - tileY, 2);
 		}
 	}
 
