@@ -397,7 +397,15 @@ class TiledStreaming {
 			this.errorX = Math.abs(this.x - this.px);
 			this.errorY = Math.abs(this.y - this.py);
 			console.log("MAE.x = " + this.errorX + ", MAE.y = " + this.errorY);
-			return Math.pow(this.px - tileX, 2) + Math.pow(this.py - tileY, 2);
+			if (this.errorX >= 0.1 && this.errorY < 0.1) {
+				return Math.pow(this.px - tileX, 2) + Math.pow(this.y - tileY, 2);
+			} else if (this.errorY >= 0.1 && this.errorX < 0.1) {
+				return Math.pow(this.y - tileY, 2) + Math.pow(this.px - tileX, 2);
+			} else if (this.errorX >= 0.1 && this.errorY >= 0.1) {
+				return Math.pow(this.x - tileX, 2) + Math.pow(this.y - tileY, 2);
+			} else {
+				return Math.pow(this.px - tileX, 2) + Math.pow(this.py - tileY, 2);
+			}
 		}
 	}
 
