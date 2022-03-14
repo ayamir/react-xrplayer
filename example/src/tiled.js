@@ -41,7 +41,6 @@ class TiledDemo extends React.Component {
 			this.xrManager.connectCameraControl();
 			this.xrManager.enableKeyControl(true);
 			this.xrManager.onCameraPositionUpdate((pos, predictPoints, isPredicted) => {
-				// console.log("lat", pos.lat, "lon", pos.lon);
 				if (this.tileStreaming === null) {
 					return;
 				}

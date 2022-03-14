@@ -25,6 +25,7 @@ class TiledStreaming {
 		this.rows = null;
 		this.cols = null;
 
+		this.threshold = 0.1;
 		this.distance = 10;
 		this.x = 0;
 		this.y = 0;
@@ -407,11 +408,11 @@ class TiledStreaming {
 			this.errorX = Math.abs(this.x - this.px);
 			this.errorY = Math.abs(this.y - this.py);
 			console.log("MAE.x = " + this.errorX + ", MAE.y = " + this.errorY);
-			if (this.errorX >= 0.1 && this.errorY < 0.1) {
+			if (this.errorX >= this.threshold && this.errorY < this.threshold) {
 				return Math.pow(this.px - tileX, 2) + Math.pow(this.y - tileY, 2);
-			} else if (this.errorY >= 0.1 && this.errorX < 0.1) {
+			} else if (this.errorY >= this.threshold && this.errorX < this.threshold) {
 				return Math.pow(this.y - tileY, 2) + Math.pow(this.px - tileX, 2);
-			} else if (this.errorX >= 0.1 && this.errorY >= 0.1) {
+			} else if (this.errorX >= this.threshold && this.errorY >= this.threshold) {
 				return Math.pow(this.x - tileX, 2) + Math.pow(this.y - tileY, 2);
 			} else {
 				return Math.pow(this.px - tileX, 2) + Math.pow(this.py - tileY, 2);
