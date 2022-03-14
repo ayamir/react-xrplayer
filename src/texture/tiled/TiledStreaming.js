@@ -25,6 +25,7 @@ class TiledStreaming {
 		this.rows = null;
 		this.cols = null;
 
+		this.distance = 10;
 		this.x = 0;
 		this.y = 0;
 
@@ -386,14 +387,23 @@ class TiledStreaming {
 		this.y = (lon + 180) / 360;
 	}
 
+	_convertCameraXY = (cameraX, cameraY) => {
+		let phi = Math.acos(cameraY / this.distance);
+		let theta = Math.acos(cameraX / this.distance / Math.sin(phi));
+		let lat = THREE.Math.radToDeg(phi);
+		let lon = THREE.Math.radToDeg(theta);
+		this.px = (180 - lat) / 180;
+		this.py = (lon + 180) / 360;
+	}
+
 	_getCenterDistanceSquare = (id, isPredicted) => {
 		let tileX = this.tileCenters[id][0];
 		let tileY = this.tileCenters[id][1];
 		if (!isPredicted) {
 			return Math.pow(this.x - tileX, 2) + Math.pow(this.y - tileY, 2);
 		} else {
-			this.px = this.predictPoints[0][0];
-			this.py = this.predictPoints[0][1];
+			// select predicted first element
+			this._convertCameraXY(this.predictPoints[0][0], this.predictPoints[0][1]);
 			this.errorX = Math.abs(this.x - this.px);
 			this.errorY = Math.abs(this.y - this.py);
 			console.log("MAE.x = " + this.errorX + ", MAE.y = " + this.errorY);
