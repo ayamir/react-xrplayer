@@ -108,9 +108,6 @@ class XRPlayerManager {
 			camera_far);
 		camera.position.set(position.x, position.y, position.z);
 		camera.target = new THREE.Vector3(target.x, target.y, target.z);
-		camera.position.x = 10;
-		camera.position.y = 0;
-		camera.position.z = 0;
 		this.camera = camera;
 	}
 
