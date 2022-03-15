@@ -213,24 +213,23 @@ class XRPlayerManager {
 		this.points = [];
 	}
 
-	normalizeX = (x) => {
+	normalizeCameraX = (x) => {
 		x = x / 10;
 		return ((Math.asin(x) / Math.PI + 1) / 2);
 	}
 
-	normalizeY = (y) => {
+	normalizeCameraY = (y) => {
 		y = y / 10;
 		return ((y * (-1) + 1) / 2);
 	}
 
-	update = (timestamp) => {
-		requestAnimationFrame(this.update);
+	communicate = () => {
 		this.sampleTimes++;
 		// sample every 4 times
 		if (this.sampleTimes % 4 === 0) {
 			// normalize x and y
-			let x = this.normalizeX(this.camera.position.x);
-			let y = this.normalizeY(this.camera.position.y);
+			let x = this.normalizeCameraX(this.camera.position.x);
+			let y = this.normalizeCameraY(this.camera.position.y);
 			this.points.push(x);
 			this.points.push(y);
 			if (this.sampleTimes === 60) {
@@ -238,6 +237,11 @@ class XRPlayerManager {
 				this.sendData();
 			}
 		}
+	}
+
+	update = (timestamp) => {
+		requestAnimationFrame(this.update);
+		this.communicate();
 		if (this.cameraTweenStatus.num === 0)
 			this.innerViewControls && this.innerViewControls.update();
 		if (this.centerModelHelper) {

@@ -78,14 +78,6 @@ class TiledStreaming {
 				ids.push(idName);
 			}
 		}
-		this.selected = [];
-		for (let i = 0; i < (rows * cols); i++) {
-			this.selected.push(false)
-		}
-		this.isReady = [];
-		for (let i = 0; i < (rows * cols); i++) {
-			this.isReady.push(false)
-		}
 		let unitWidth = 0.5 / cols;
 		let unitHeight = 0.5 / rows;
 		this.tileCenters = [];
@@ -234,6 +226,8 @@ class TiledStreaming {
 			this.enhanceVideos.push(null);
 			this.enhanceDash.push(null);
 			this.videoMediaAsyns.push(null);
+			this.selected.push(false)
+			this.isReady.push(false)
 		}
 	}
 
